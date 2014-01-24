@@ -1,6 +1,7 @@
 package com.hungryfish.manager;
 
 import android.graphics.Color;
+import com.hungryfish.util.FishType;
 import org.andengine.audio.sound.Sound;
 import org.andengine.audio.sound.SoundFactory;
 import org.andengine.engine.Engine;
@@ -15,13 +16,12 @@ import org.andengine.opengl.texture.atlas.bitmap.source.IBitmapTextureAtlasSourc
 import org.andengine.opengl.texture.atlas.buildable.builder.BlackPawnTextureAtlasBuilder;
 import org.andengine.opengl.texture.atlas.buildable.builder.ITextureAtlasBuilder;
 import org.andengine.opengl.texture.region.ITextureRegion;
+import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.BaseGameActivity;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * User: Breku
@@ -42,6 +42,8 @@ public class ResourcesManager {
 
     // Game
     private ITextureRegion backgroundGameTextureRegion;
+    private Map<FishType, ITiledTextureRegion> fishTextureMap;
+
 
     // Splash
     private ITextureRegion splashTextureRegion;
@@ -242,6 +244,13 @@ public class ResourcesManager {
         gameTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
 
         backgroundGameTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "background.png");
+        fishTextureMap = new HashMap<FishType, ITiledTextureRegion>();
+        fishTextureMap.put(FishType.BLACK,BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas,activity,"blackFish.png",2,1));
+        fishTextureMap.put(FishType.GREEN,BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas,activity,"redFish.png",2,1));
+        fishTextureMap.put(FishType.ORANGE,BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas,activity,"greenFish.png",2,1));
+        fishTextureMap.put(FishType.PURPLE,BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas,activity,"purpleFish.png",2,1));
+        fishTextureMap.put(FishType.RED,BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas,activity,"redFish.png",2,1));
+        fishTextureMap.put(FishType.YELLOW,BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas,activity,"yellowFish.png",2,1));
 
         try {
             gameTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 0, 1));
@@ -513,4 +522,9 @@ public class ResourcesManager {
         loadingTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(loadingTextureAtlas, activity, "background.png", 0, 0);
         loadingTextureAtlas.load();
     }
+
+    public ITiledTextureRegion getTextureFor(FishType fishType) {
+        return fishTextureMap.get(fishType);
+    }
+
 }
