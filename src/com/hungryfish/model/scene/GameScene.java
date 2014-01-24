@@ -4,9 +4,11 @@ import com.hungryfish.manager.ResourcesManager;
 import com.hungryfish.manager.SceneManager;
 import com.hungryfish.matcher.ClassTouchAreaMacher;
 import com.hungryfish.model.shape.Fish;
+import com.hungryfish.pool.FishPool;
 import com.hungryfish.util.ConstantsUtil;
 import com.hungryfish.util.FishType;
 import com.hungryfish.util.SceneType;
+import org.andengine.engine.camera.BoundCamera;
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.input.sensor.acceleration.AccelerationData;
@@ -22,6 +24,8 @@ public class GameScene extends BaseScene implements IAccelerationListener{
 
     private Integer firstTimeCounter;
     private Fish player;
+    private AccelerationData accelerationData;
+    private FishPool fishPool;
 
     /**
      * @param objects objects[0] - levelDifficulty
@@ -37,11 +41,19 @@ public class GameScene extends BaseScene implements IAccelerationListener{
         init(objects);
         createBackground();
         createPlayer();
+        createEnemy();
         createHUD();
     }
 
+    private void createEnemy() {
+        for(int i = 0 ;i<ConstantsUtil.NUMBER_OF_ENEMIES; i++){
+            attachChild(fishPool.obtainPoolItem());
+        }
+
+    }
+
     private void createPlayer() {
-        player = new Fish(400,200, FishType.YELLOW);
+        player = new Fish(ConstantsUtil.SCREEN_WIDTH,ConstantsUtil.SCREEN_HEIGHT, FishType.YELLOW);
         attachChild(player);
     }
 
@@ -55,7 +67,10 @@ public class GameScene extends BaseScene implements IAccelerationListener{
         clearUpdateHandlers();
         clearTouchAreas();
 
-        engine.enableAccelerationSensor(activity,this);
+        engine.enableAccelerationSensor(activity, this);
+        accelerationData = new AccelerationData();
+        fishPool = new FishPool();
+        fishPool.batchAllocatePoolItems(ConstantsUtil.POOL_SIZE);
 
         firstTimeCounter = 0;
 
@@ -65,14 +80,30 @@ public class GameScene extends BaseScene implements IAccelerationListener{
     private void createHUD() {
         gameHUD = new HUD();
         camera.setHUD(gameHUD);
+        camera.setChaseEntity(player);
+        ((BoundCamera)camera).setBounds(0,0,ConstantsUtil.SCREEN_WIDTH * 2,ConstantsUtil.SCREEN_HEIGHT * 2);
+        ((BoundCamera)camera).setBoundsEnabled(true);
+
     }
 
     private void createBackground() {
         unregisterTouchAreas(new ClassTouchAreaMacher(Sprite.class));
         clearChildScene();
-        attachChild(new Sprite(ConstantsUtil.SCREEN_WIDTH / 2, ConstantsUtil.SCREEN_HEIGHT / 2,
+
+        int offSet = 1;
+        attachChild(new Sprite(ConstantsUtil.SCREEN_WIDTH / 2 + offSet, ConstantsUtil.SCREEN_HEIGHT * 3 / 2 - offSet,
                 ResourcesManager.getInstance().getBackgroundGameTextureRegion(), vertexBufferObjectManager));
+        attachChild(new Sprite(ConstantsUtil.SCREEN_WIDTH * 3 / 2 - offSet, ConstantsUtil.SCREEN_HEIGHT * 3 / 2 - offSet,
+                ResourcesManager.getInstance().getBackgroundGameTextureRegion(), vertexBufferObjectManager));
+        attachChild(new Sprite(ConstantsUtil.SCREEN_WIDTH / 2 + offSet, ConstantsUtil.SCREEN_HEIGHT / 2+ offSet,
+                ResourcesManager.getInstance().getBackgroundGameTextureRegion(), vertexBufferObjectManager));
+        attachChild(new Sprite(ConstantsUtil.SCREEN_WIDTH * 3 / 2 - offSet, ConstantsUtil.SCREEN_HEIGHT / 2 + offSet,
+                ResourcesManager.getInstance().getBackgroundGameTextureRegion(), vertexBufferObjectManager));
+
+
     }
+
+
 
 
     @Override
@@ -82,6 +113,7 @@ public class GameScene extends BaseScene implements IAccelerationListener{
             resourcesManager.getStartGameSound().play();
         }
 
+        player.updatePosition(accelerationData);
         super.onManagedUpdate(pSecondsElapsed);
     }
 
@@ -105,6 +137,7 @@ public class GameScene extends BaseScene implements IAccelerationListener{
 
     @Override
     public void onAccelerationChanged(AccelerationData pAccelerationData) {
-        player.updatePosition(pAccelerationData);
+        this.accelerationData = pAccelerationData;
+
     }
 }

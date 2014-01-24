@@ -21,4 +21,8 @@ public enum FishType {
     public float getFishSpeed() {
         return fishSpeed;
     }
+
+    public FishType next(){
+        return values()[(ordinal()+1)%values().length];
+    }
 }
