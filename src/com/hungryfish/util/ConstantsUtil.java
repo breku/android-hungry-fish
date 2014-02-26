@@ -23,5 +23,5 @@ public class ConstantsUtil implements Constants, LevelConstants {
     /**
      * Number of enemy fishes on the screen
      */
-    public static final int NUMBER_OF_ENEMIES = 10;
+    public static final int NUMBER_OF_ENEMIES = 30;
 }

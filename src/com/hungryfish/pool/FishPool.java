@@ -2,6 +2,7 @@ package com.hungryfish.pool;
 
 import com.hungryfish.model.shape.Fish;
 import com.hungryfish.util.FishType;
+import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.util.adt.pool.GenericPool;
 
 import java.util.Random;
@@ -12,8 +13,15 @@ import java.util.Random;
  */
 public class FishPool extends GenericPool<Fish> {
 
-    FishType fishType = FishType.BLACK;
-    Random random = new Random();
+    private FishType fishType = FishType.BLACK;
+    private Random random = new Random();
+    private int counter = 0;
+    private PhysicsWorld physicsWorld;
+
+    public FishPool(PhysicsWorld physicsWorld) {
+        super();
+        this.physicsWorld = physicsWorld;
+    }
 
     /**
      * Called when a Bullet is required but there isn't one in the pool
@@ -22,12 +30,12 @@ public class FishPool extends GenericPool<Fish> {
     protected Fish onAllocatePoolItem() {
         Fish fish;
         fishType = fishType.next();
-        if(random.nextBoolean()){
-            fish = new Fish(random.nextInt(50)+1500,random.nextInt(910)+25,fishType);
-            fish.setCurrentTileIndex(0);
-        }else {
-            fish = new Fish(random.nextInt(50)+25,random.nextInt(910)+25,fishType);
+        if (random.nextBoolean()) {
+            fish = new Fish(random.nextInt(50) + 1500, random.nextInt(910) + 25, fishType, physicsWorld, true, "enemyFish" + counter++);
             fish.setCurrentTileIndex(1);
+        } else {
+            fish = new Fish(random.nextInt(50) + 25, random.nextInt(910) + 25, fishType, physicsWorld, true, "enemyFish" + counter++);
+            fish.setCurrentTileIndex(0);
         }
         return fish;
     }
@@ -48,6 +56,5 @@ public class FishPool extends GenericPool<Fish> {
      */
     @Override
     protected void onHandleObtainItem(Fish pItem) {
-        super.onHandleObtainItem(pItem);
     }
 }

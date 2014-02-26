@@ -246,8 +246,8 @@ public class ResourcesManager {
         backgroundGameTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "background.png");
         fishTextureMap = new HashMap<FishType, ITiledTextureRegion>();
         fishTextureMap.put(FishType.BLACK,BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas,activity,"blackFish.png",2,1));
-        fishTextureMap.put(FishType.GREEN,BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas,activity,"redFish.png",2,1));
-        fishTextureMap.put(FishType.ORANGE,BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas,activity,"greenFish.png",2,1));
+        fishTextureMap.put(FishType.GREEN,BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas,activity,"greenFish.png",2,1));
+        fishTextureMap.put(FishType.ORANGE,BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas,activity,"orangeFish.png",2,1));
         fishTextureMap.put(FishType.PURPLE,BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas,activity,"purpleFish.png",2,1));
         fishTextureMap.put(FishType.RED,BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas,activity,"redFish.png",2,1));
         fishTextureMap.put(FishType.YELLOW,BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas,activity,"yellowFish.png",2,1));
