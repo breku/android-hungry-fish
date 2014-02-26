@@ -76,14 +76,17 @@ public class MyActivity extends BaseGameActivity {
     @Override
     protected void onSetContentView() {
 
-        FrameLayout relativeLayout = new FrameLayout(this);
+        FrameLayout frameLayout = new FrameLayout(this);
 
         this.mRenderSurfaceView = new RenderSurfaceView(this);
         mRenderSurfaceView.setRenderer(mEngine, this);
 
+        final FrameLayout.LayoutParams frameLayoutLayoutParams =
+                new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.MATCH_PARENT);
 
         try {
-            adView = new AdView(this, AdSize.BANNER, ConstantsUtil.MY_AD_UNIT_ID);
+            adView = new AdView(this, AdSize.SMART_BANNER, ConstantsUtil.MY_AD_UNIT_ID);
             adView.setTag("adView");
             adView.refreshDrawableState();
             adView.setVisibility(AdView.INVISIBLE);
@@ -98,20 +101,19 @@ public class MyActivity extends BaseGameActivity {
             adRequest.addTestDevice("7F8C8CB8DDF62CBD63E1AE7D4693C1F5");
             adView.loadAd(adRequest);
 
-            AdView.LayoutParams adViewParams = new AdView.LayoutParams(
-                    AdView.LayoutParams.MATCH_PARENT,
-                    AdView.LayoutParams.MATCH_PARENT);
-            //the next line is the key to putting it on the bottom
-            adViewParams.addRule(AdView.ALIGN_PARENT_BOTTOM);
+            final FrameLayout.LayoutParams adViewLayoutParams =
+                    new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
+                            FrameLayout.LayoutParams.WRAP_CONTENT,
+                            Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM);
 
 
-            relativeLayout.addView(this.mRenderSurfaceView);
-            relativeLayout.addView(adView, adViewParams);
+            frameLayout.addView(this.mRenderSurfaceView);
+            frameLayout.addView(adView, adViewLayoutParams);
         } catch (Exception e) {
             Debug.e("ADS ARE NOT WORKING");
             //ads aren't working. oh well
         }
-        this.setContentView(relativeLayout);
+        this.setContentView(frameLayout, frameLayoutLayoutParams);
 
     }
 
