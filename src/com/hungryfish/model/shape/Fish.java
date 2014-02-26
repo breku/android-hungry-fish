@@ -50,26 +50,26 @@ public class Fish extends AnimatedSprite {
     public void updatePosition(AccelerationData data) {
 
         float deadZone = 0.05f;
-        if (data.getX() > deadZone ) {
+        if (data.getX() > deadZone) {
             setCurrentTileIndex(0);
-        } else if (data.getX() < -deadZone){
+        } else if (data.getX() < -deadZone) {
             setCurrentTileIndex(1);
         }
-        body.setLinearVelocity(data.getX()*fishType.getFishSpeed(),data.getY()*fishType.getFishSpeed());
+        body.setLinearVelocity(data.getX() * fishType.getFishSpeed(), data.getY() * fishType.getFishSpeed());
     }
 
-    public boolean isMoving(){
+    public boolean isMoving() {
         return moving;
     }
 
-    public void swim(){
+    public void swim() {
         moving = true;
-        if(getCurrentTileIndex()==0){
+        if (getCurrentTileIndex() == 0) {
             // RIGHT
-            body.setLinearVelocity(fishType.getFishSpeed(),0);
-        }else {
+            body.setLinearVelocity(fishType.getFishSpeed(), 0);
+        } else {
             // LEFT
-            body.setLinearVelocity(-1*fishType.getFishSpeed(),0);
+            body.setLinearVelocity(-1 * fishType.getFishSpeed(), 0);
         }
     }
 

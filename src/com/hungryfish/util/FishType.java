@@ -23,7 +23,7 @@ public enum FishType {
         return fishSpeed;
     }
 
-    public FishType next(){
-        return values()[(ordinal()+1)%values().length];
+    public FishType next() {
+        return values()[(ordinal() + 1) % values().length];
     }
 }

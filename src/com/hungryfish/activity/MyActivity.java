@@ -82,7 +82,6 @@ public class MyActivity extends BaseGameActivity {
         mRenderSurfaceView.setRenderer(mEngine, this);
 
 
-
         try {
             adView = new AdView(this, AdSize.BANNER, ConstantsUtil.MY_AD_UNIT_ID);
             adView.setTag("adView");
