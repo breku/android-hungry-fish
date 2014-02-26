@@ -17,6 +17,14 @@ import org.andengine.input.sensor.acceleration.AccelerationData;
  */
 public class Fish extends AnimatedSprite {
 
+    /* The categories. */
+    public static final short CATEGORY_BIT_PLAYER = 1;
+    public static final short CATEGORY_BIT_ENEMY = 2;
+
+    /* And what should collide with what. */
+    public static final short MASK_BITS_PLAYER = CATEGORY_BIT_ENEMY;
+    public static final short MASK_BITS_ENEMY = CATEGORY_BIT_PLAYER;
+
     private FishType fishType;
     private FixtureDef fixtureDef;
     public Body body;
@@ -27,9 +35,17 @@ public class Fish extends AnimatedSprite {
     public Fish(final float pX, final float pY, FishType fishType, PhysicsWorld physicsWorld, boolean isEnemy, String bodyUserData) {
         super(pX, pY, ResourcesManager.getInstance().getTextureFor(fishType), ResourcesManager.getInstance().getVertexBufferObjectManager());
         this.fishType = fishType;
-        this.fixtureDef = PhysicsFactory.createFixtureDef(0, 0, 0);
         this.isEnemy = isEnemy;
         moving = false;
+
+        if(isEnemy){
+            this.fixtureDef = PhysicsFactory.createFixtureDef(0, 0, 0,false,CATEGORY_BIT_ENEMY,MASK_BITS_ENEMY,(short)0);
+        }else {
+            this.fixtureDef = PhysicsFactory.createFixtureDef(0, 0, 0,false,CATEGORY_BIT_PLAYER,MASK_BITS_PLAYER,(short)0);
+        }
+
+
+
         createPhysics(physicsWorld, bodyUserData);
     }
 
