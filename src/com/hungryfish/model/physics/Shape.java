@@ -1,6 +1,6 @@
 package com.hungryfish.model.physics;
 
-import java.util.List;
+import com.badlogic.gdx.math.Vector2;
 
 /**
  * User: Breku
@@ -10,7 +10,7 @@ public class Shape {
 
 
     private String type;
-    private List<Vertice> vertices;
+    private Vector2[] vertices;
 
     public String getType() {
         return type;
@@ -20,11 +20,11 @@ public class Shape {
         this.type = type;
     }
 
-    public List<Vertice> getVertices() {
+    public Vector2[] getVertices() {
         return vertices;
     }
 
-    public void setVertices(List<Vertice> vertices) {
+    public void setVertices(Vector2[] vertices) {
         this.vertices = vertices;
     }
 }

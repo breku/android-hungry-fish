@@ -56,5 +56,6 @@ public class FishPool extends GenericPool<Fish> {
      */
     @Override
     protected void onHandleObtainItem(Fish pItem) {
+        pItem.getBody().setActive(true);
     }
 }

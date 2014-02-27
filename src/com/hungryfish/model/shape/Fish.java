@@ -1,10 +1,13 @@
 package com.hungryfish.model.shape;
 
+import android.widget.Toast;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.hungryfish.manager.ResourcesManager;
 import com.hungryfish.util.FishType;
+import org.andengine.entity.IEntity;
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
@@ -27,7 +30,7 @@ public class Fish extends AnimatedSprite {
 
     private FishType fishType;
     private FixtureDef fixtureDef;
-    public Body body;
+    private Body body;
     private boolean isEnemy;
     private boolean moving;
 
@@ -44,19 +47,40 @@ public class Fish extends AnimatedSprite {
             this.fixtureDef = PhysicsFactory.createFixtureDef(0, 0, 0,false,CATEGORY_BIT_PLAYER,MASK_BITS_PLAYER,(short)0);
         }
 
-
-
         createPhysics(physicsWorld, bodyUserData);
     }
 
     private void createPhysics(PhysicsWorld physicsWorld, String bodyUserData) {
         body = PhysicsFactory.createBoxBody(physicsWorld, this, BodyDef.BodyType.DynamicBody, fixtureDef);
-        body.setUserData(bodyUserData);
+        Vector2[] temp = new Vector2[4];
+        temp[0] = new Vector2(-1,-1);
+        temp[1] = new Vector2(-1,1);
+        temp[2] = new Vector2(1,1);
+        temp[3] = new Vector2(1,-1);
+//        body = PhysicsFactory.createPolygonBody(physicsWorld,this,temp, BodyDef.BodyType.DynamicBody,fixtureDef);
+//        body.setUserData(bodyUserData);
         body.setFixedRotation(true);
-        body.setAwake(true);
-        body.setActive(true);
+
+        if(isEnemy){
+            body.setActive(false);
+        }
+
         physicsWorld.registerPhysicsConnector(new PhysicsConnector(this, body, true, false));
 
+    }
+
+    @Override
+    public boolean collidesWith(IEntity pOtherEntity) {
+        if(!this.isEnemy){
+            ResourcesManager.getInstance().getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(ResourcesManager.getInstance().getActivity(), "BUM", 1).show();
+                }
+            });
+
+        }
+        return super.collidesWith(pOtherEntity);
     }
 
     public boolean isEnemy() {
@@ -92,5 +116,9 @@ public class Fish extends AnimatedSprite {
     public void stop() {
         moving = false;
         body.setLinearVelocity(0, 0);
+    }
+
+    public Body getBody() {
+        return body;
     }
 }

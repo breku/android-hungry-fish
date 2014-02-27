@@ -1,8 +1,10 @@
 package com.hungryfish.manager;
 
 import android.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 import com.google.gson.Gson;
 import com.hungryfish.model.physics.JSONFishData;
+import com.hungryfish.model.physics.RigidBody;
 import com.hungryfish.util.FishType;
 import org.andengine.audio.sound.Sound;
 import org.andengine.audio.sound.SoundFactory;
@@ -46,6 +48,7 @@ public class ResourcesManager {
     // Game
     private ITextureRegion backgroundGameTextureRegion;
     private Map<FishType, ITiledTextureRegion> fishTextureMap;
+    private JSONFishData jsonFishData;
 
 
     // Splash
@@ -114,12 +117,8 @@ public class ResourcesManager {
         try {
 
 
-            BufferedReader br=new BufferedReader(new InputStreamReader(activity.getAssets().open("json/asdf.txt")));
-//            AssetFileDescriptor descriptor = getAssets().openFd("myfile.txt");
-//            FileReader reader = new FileReader(descriptor.getFileDescriptor());
-//            BufferedReader bufferedReader = new BufferedReader(new FileReader("json/aaa.txt"));
-            JSONFishData data = gson.fromJson(br,JSONFishData.class);
-            System.out.println("AAA");
+            BufferedReader br=new BufferedReader(new InputStreamReader(activity.getAssets().open("json/fishData.json")));
+            jsonFishData = gson.fromJson(br,JSONFishData.class);
         } catch (FileNotFoundException e) {
             Debug.e(e);
         } catch (IOException e) {
@@ -547,6 +546,16 @@ public class ResourcesManager {
 
     public ITiledTextureRegion getTextureFor(FishType fishType) {
         return fishTextureMap.get(fishType);
+    }
+    
+    public Vector2[] getVerticesFor(FishType fishType){
+        List<RigidBody> rigidBodies = jsonFishData.getRigidBodies();
+        for (RigidBody rigidBody : rigidBodies) {
+            if(rigidBody.getName().equalsIgnoreCase(fishType.name())){
+                return rigidBody.getShapes().get(0).getVertices();
+            }
+        }
+        throw new UnsupportedOperationException("Fish does not exist in JSON data");
     }
 
 }
