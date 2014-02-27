@@ -1,6 +1,8 @@
 package com.hungryfish.manager;
 
 import android.graphics.Color;
+import com.google.gson.Gson;
+import com.hungryfish.model.physics.JSONFishData;
 import com.hungryfish.util.FishType;
 import org.andengine.audio.sound.Sound;
 import org.andengine.audio.sound.SoundFactory;
@@ -19,8 +21,9 @@ import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.BaseGameActivity;
+import org.andengine.util.debug.Debug;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -103,6 +106,25 @@ public class ResourcesManager {
         loadGameGraphics();
         loadGameMusic();
         loadEndGameResources();
+        loadJSONBodies();
+    }
+
+    private void loadJSONBodies() {
+        Gson gson = new Gson();
+        try {
+
+
+            BufferedReader br=new BufferedReader(new InputStreamReader(activity.getAssets().open("json/asdf.txt")));
+//            AssetFileDescriptor descriptor = getAssets().openFd("myfile.txt");
+//            FileReader reader = new FileReader(descriptor.getFileDescriptor());
+//            BufferedReader bufferedReader = new BufferedReader(new FileReader("json/aaa.txt"));
+            JSONFishData data = gson.fromJson(br,JSONFishData.class);
+            System.out.println("AAA");
+        } catch (FileNotFoundException e) {
+            Debug.e(e);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void loadEndGameResources() {
