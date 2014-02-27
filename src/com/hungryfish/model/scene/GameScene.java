@@ -14,6 +14,7 @@ import org.andengine.engine.camera.hud.HUD;
 import org.andengine.entity.IEntity;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
+import org.andengine.extension.physics.box2d.util.debugdraw.Box2dDebugRenderer;
 import org.andengine.input.sensor.acceleration.AccelerationData;
 import org.andengine.input.sensor.acceleration.IAccelerationListener;
 
@@ -54,6 +55,12 @@ public class GameScene extends BaseScene implements IAccelerationListener {
         createPlayer();
         createEnemy();
         createHUD();
+        createDebugRenderer();
+    }
+
+    private void createDebugRenderer() {
+        Box2dDebugRenderer box2dDebugRenderer = new Box2dDebugRenderer(physicsWorld,vertexBufferObjectManager);
+        attachChild(box2dDebugRenderer);
     }
 
     private void clearEverything() {
