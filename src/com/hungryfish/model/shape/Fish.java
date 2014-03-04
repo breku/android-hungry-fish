@@ -12,7 +12,11 @@ import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
+import org.andengine.extension.physics.box2d.util.triangulation.EarClippingTriangulator;
+import org.andengine.extension.physics.box2d.util.triangulation.ITriangulationAlgoritm;
 import org.andengine.input.sensor.acceleration.AccelerationData;
+
+import java.util.List;
 
 /**
  * User: Breku
@@ -51,14 +55,14 @@ public class Fish extends AnimatedSprite {
     }
 
     private void createPhysics(PhysicsWorld physicsWorld, String bodyUserData) {
-        body = PhysicsFactory.createBoxBody(physicsWorld, this, BodyDef.BodyType.DynamicBody, fixtureDef);
-        Vector2[] temp = new Vector2[4];
-        temp[0] = new Vector2(-1,-1);
-        temp[1] = new Vector2(-1,1);
-        temp[2] = new Vector2(1,1);
-        temp[3] = new Vector2(1,-1);
-//        body = PhysicsFactory.createPolygonBody(physicsWorld,this,temp, BodyDef.BodyType.DynamicBody,fixtureDef);
-//        body.setUserData(bodyUserData);
+
+        ITriangulationAlgoritm triangulationAlgoritm =  new EarClippingTriangulator();
+        List<Vector2> triangles = triangulationAlgoritm.computeTriangles(ResourcesManager.getInstance().getVerticesFor(fishType));
+        body = PhysicsFactory.createTrianglulatedBody(physicsWorld,this,triangles, BodyDef.BodyType.DynamicBody,fixtureDef);
+
+//        body = PhysicsFactory.createBoxBody(physicsWorld, this, BodyDef.BodyType.DynamicBody, fixtureDef);
+
+        body.setUserData(bodyUserData);
         body.setFixedRotation(true);
 
         if(isEnemy){

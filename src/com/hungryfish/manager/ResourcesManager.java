@@ -548,7 +548,7 @@ public class ResourcesManager {
         return fishTextureMap.get(fishType);
     }
     
-    public Vector2[] getVerticesFor(FishType fishType){
+    public List<Vector2> getVerticesFor(FishType fishType){
         List<RigidBody> rigidBodies = jsonFishData.getRigidBodies();
         for (RigidBody rigidBody : rigidBodies) {
             if(rigidBody.getName().equalsIgnoreCase(fishType.name())){
