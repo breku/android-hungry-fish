@@ -25,7 +25,10 @@ import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.BaseGameActivity;
 import org.andengine.util.debug.Debug;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 
 /**
@@ -117,8 +120,8 @@ public class ResourcesManager {
         try {
 
 
-            BufferedReader br=new BufferedReader(new InputStreamReader(activity.getAssets().open("json/aaa.json")));
-            jsonFishData = gson.fromJson(br,JSONFishData.class);
+            BufferedReader br = new BufferedReader(new InputStreamReader(activity.getAssets().open("json/aaa.json")));
+            jsonFishData = gson.fromJson(br, JSONFishData.class);
         } catch (FileNotFoundException e) {
             Debug.e(e);
         } catch (IOException e) {
@@ -547,11 +550,11 @@ public class ResourcesManager {
     public ITiledTextureRegion getTextureFor(FishType fishType) {
         return fishTextureMap.get(fishType);
     }
-    
-    public List<Vector2> getVerticesFor(FishType fishType, int shapeNumber){
+
+    public List<Vector2> getVerticesFor(FishType fishType, int shapeNumber) {
         List<RigidBody> rigidBodies = jsonFishData.getRigidBodies();
         for (RigidBody rigidBody : rigidBodies) {
-            if(rigidBody.getName().equalsIgnoreCase(fishType.name())){
+            if (rigidBody.getName().equalsIgnoreCase(fishType.name())) {
                 return rigidBody.getShapes().get(shapeNumber).getVertices();
             }
         }

@@ -26,12 +26,12 @@ public class CollisionUpdateHandler implements IUpdateHandler {
 
     @Override
     public void onUpdate(float pSecondsElapsed) {
-        Iterator<Body> bodyIterator= physicsWorld.getBodies();
+        Iterator<Body> bodyIterator = physicsWorld.getBodies();
 
-        while (bodyIterator.hasNext()){
+        while (bodyIterator.hasNext()) {
             Body body = bodyIterator.next();
             FishBodyData userData = (FishBodyData) body.getUserData();
-            if(userData.isToRemove()){
+            if (userData.isToRemove()) {
 
                 Fish fish = (Fish) gameScene.getChildByTag(userData.getSpriteTag());
                 fish.detachSelf();

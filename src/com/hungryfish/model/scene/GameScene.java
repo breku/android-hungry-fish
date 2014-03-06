@@ -71,12 +71,12 @@ public class GameScene extends BaseScene implements IAccelerationListener {
         fishContactListener = new FishContactListener();
         physicsWorld.setContactListener(fishContactListener);
 
-        collisionUpdateHandler = new CollisionUpdateHandler(physicsWorld,this);
+        collisionUpdateHandler = new CollisionUpdateHandler(physicsWorld, this);
         registerUpdateHandler(collisionUpdateHandler);
     }
 
     private void createDebugRenderer() {
-        Box2dDebugRenderer box2dDebugRenderer = new Box2dDebugRenderer(physicsWorld,vertexBufferObjectManager);
+        Box2dDebugRenderer box2dDebugRenderer = new Box2dDebugRenderer(physicsWorld, vertexBufferObjectManager);
         attachChild(box2dDebugRenderer);
     }
 
@@ -93,8 +93,8 @@ public class GameScene extends BaseScene implements IAccelerationListener {
     }
 
     private void createPlayer() {
-        FishBodyData fishBodyData = new FishBodyData("player",ConstantsUtil.TAG_SPRITE_PLAYER);
-        player = new Fish(ConstantsUtil.SCREEN_WIDTH, ConstantsUtil.SCREEN_HEIGHT, FishType.YELLOW, physicsWorld, false, fishBodyData,null,ConstantsUtil.TAG_SPRITE_PLAYER);
+        FishBodyData fishBodyData = new FishBodyData("player", ConstantsUtil.TAG_SPRITE_PLAYER);
+        player = new Fish(ConstantsUtil.SCREEN_WIDTH, ConstantsUtil.SCREEN_HEIGHT, FishType.YELLOW, physicsWorld, false, fishBodyData, null, ConstantsUtil.TAG_SPRITE_PLAYER);
 
         attachChild(player);
     }

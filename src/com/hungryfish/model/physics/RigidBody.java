@@ -12,7 +12,7 @@ public class RigidBody {
     private String name;
     private String imagePath;
     private Origin origin;
-    private Map<String,Float> [][] polygons;
+    private Map<String, Float>[][] polygons;
     private List<Circle> circles;
     private List<Shape> shapes;
 

@@ -33,12 +33,12 @@ public class FishPool extends GenericPool<Fish> {
         fishType = fishType.next();
         counter++;
 
-        FishBodyData fishBodyData = new FishBodyData("enemyFish " + fishType.name() + " "+ counter,counter);
+        FishBodyData fishBodyData = new FishBodyData("enemyFish " + fishType.name() + " " + counter, counter);
         if (random.nextBoolean()) {
-            fish = new Fish(random.nextInt(50) + 1500, random.nextInt(910) + 25, fishType, physicsWorld, true, fishBodyData,true,counter);
+            fish = new Fish(random.nextInt(50) + 1500, random.nextInt(910) + 25, fishType, physicsWorld, true, fishBodyData, true, counter);
             fish.setCurrentTileIndex(1);
         } else {
-            fish = new Fish(random.nextInt(50) + 25, random.nextInt(910) + 25, fishType, physicsWorld, true, fishBodyData,false,counter);
+            fish = new Fish(random.nextInt(50) + 25, random.nextInt(910) + 25, fishType, physicsWorld, true, fishBodyData, false, counter);
             fish.setCurrentTileIndex(0);
         }
         return fish;

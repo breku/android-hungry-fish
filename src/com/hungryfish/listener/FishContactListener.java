@@ -19,8 +19,7 @@ public class FishContactListener implements ContactListener {
         FishBodyData x2Data = ((FishBodyData) x2.getBody().getUserData());
 
 
-
-        if(x1Data.getName().equals("player") && x2Data.getName().contains("enemy") ){
+        if (x1Data.getName().equals("player") && x2Data.getName().contains("enemy")) {
             x2Data.setToRemove(true);
         }
     }
