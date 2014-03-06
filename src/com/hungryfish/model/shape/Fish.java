@@ -38,14 +38,17 @@ public class Fish extends AnimatedSprite {
     private Body currentBody;
     private boolean isEnemy;
     private Boolean movingLeft;
+    private Integer fishTag;
 
 
-    public Fish(final float pX, final float pY, FishType fishType, PhysicsWorld physicsWorld, boolean isEnemy, String bodyUserData, Boolean movingLeft) {
+    public Fish(final float pX, final float pY, FishType fishType, PhysicsWorld physicsWorld, boolean isEnemy, FishBodyData fishBodyData, Boolean movingLeft, Integer fishTag) {
         super(pX, pY, ResourcesManager.getInstance().getTextureFor(fishType), ResourcesManager.getInstance().getVertexBufferObjectManager());
         this.fishType = fishType;
         this.isEnemy = isEnemy;
         this.movingLeft = movingLeft;
+        this.fishTag = fishTag;
         bodies = new Body[2];
+        setTag(fishTag);
 
 
         if (isEnemy) {
@@ -54,10 +57,10 @@ public class Fish extends AnimatedSprite {
             this.fixtureDef = PhysicsFactory.createFixtureDef(0, 0, 0, false, CATEGORY_BIT_PLAYER, MASK_BITS_PLAYER, (short) 0);
         }
 
-        createPhysics(physicsWorld, bodyUserData);
+        createPhysics(physicsWorld, fishBodyData);
     }
 
-    private void createPhysics(PhysicsWorld physicsWorld, String bodyUserData) {
+    private void createPhysics(PhysicsWorld physicsWorld, FishBodyData bodyUserData) {
 
         ITriangulationAlgoritm triangulationAlgoritm = new EarClippingTriangulator();
 
@@ -164,5 +167,9 @@ public class Fish extends AnimatedSprite {
 
     public Body getCurrentBody() {
         return currentBody;
+    }
+
+    public Integer getFishTag() {
+        return fishTag;
     }
 }

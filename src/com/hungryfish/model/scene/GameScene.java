@@ -1,16 +1,21 @@
 package com.hungryfish.model.scene;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.hungryfish.handler.CollisionUpdateHandler;
+import com.hungryfish.listener.FishContactListener;
 import com.hungryfish.manager.ResourcesManager;
 import com.hungryfish.manager.SceneManager;
 import com.hungryfish.matcher.ClassTouchAreaMacher;
 import com.hungryfish.model.shape.Fish;
+import com.hungryfish.model.shape.FishBodyData;
 import com.hungryfish.pool.FishPool;
 import com.hungryfish.util.ConstantsUtil;
 import com.hungryfish.util.FishType;
 import com.hungryfish.util.SceneType;
 import org.andengine.engine.camera.BoundCamera;
 import org.andengine.engine.camera.hud.HUD;
+import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.entity.IEntity;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
@@ -32,9 +37,12 @@ public class GameScene extends BaseScene implements IAccelerationListener {
     private Integer firstTimeCounter;
     private Fish player;
     private AccelerationData accelerationData;
+    private ContactListener fishContactListener;
     private FishPool fishPool;
 
     private PhysicsWorld physicsWorld;
+
+    private IUpdateHandler collisionUpdateHandler;
 
 
     /**
@@ -55,7 +63,16 @@ public class GameScene extends BaseScene implements IAccelerationListener {
         createPlayer();
         createEnemy();
         createHUD();
-        createDebugRenderer();
+        activateCollisions();
+//        createDebugRenderer();
+    }
+
+    private void activateCollisions() {
+        fishContactListener = new FishContactListener();
+        physicsWorld.setContactListener(fishContactListener);
+
+        collisionUpdateHandler = new CollisionUpdateHandler(physicsWorld,this);
+        registerUpdateHandler(collisionUpdateHandler);
     }
 
     private void createDebugRenderer() {
@@ -76,7 +93,8 @@ public class GameScene extends BaseScene implements IAccelerationListener {
     }
 
     private void createPlayer() {
-        player = new Fish(ConstantsUtil.SCREEN_WIDTH, ConstantsUtil.SCREEN_HEIGHT, FishType.YELLOW, physicsWorld, false, "player",null);
+        FishBodyData fishBodyData = new FishBodyData("player",ConstantsUtil.TAG_SPRITE_PLAYER);
+        player = new Fish(ConstantsUtil.SCREEN_WIDTH, ConstantsUtil.SCREEN_HEIGHT, FishType.YELLOW, physicsWorld, false, fishBodyData,null,ConstantsUtil.TAG_SPRITE_PLAYER);
 
         attachChild(player);
     }

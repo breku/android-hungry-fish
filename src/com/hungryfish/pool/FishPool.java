@@ -1,6 +1,7 @@
 package com.hungryfish.pool;
 
 import com.hungryfish.model.shape.Fish;
+import com.hungryfish.model.shape.FishBodyData;
 import com.hungryfish.util.FishType;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.util.adt.pool.GenericPool;
@@ -15,7 +16,7 @@ public class FishPool extends GenericPool<Fish> {
 
     private FishType fishType = FishType.BLACK;
     private Random random = new Random();
-    private int counter = 0;
+    private int counter = 1;
     private PhysicsWorld physicsWorld;
 
     public FishPool(PhysicsWorld physicsWorld) {
@@ -30,11 +31,14 @@ public class FishPool extends GenericPool<Fish> {
     protected Fish onAllocatePoolItem() {
         Fish fish;
         fishType = fishType.next();
+        counter++;
+
+        FishBodyData fishBodyData = new FishBodyData("enemyFish " + fishType.name() + " "+ counter,counter);
         if (random.nextBoolean()) {
-            fish = new Fish(random.nextInt(50) + 1500, random.nextInt(910) + 25, fishType, physicsWorld, true, "enemyFish" + counter++,true);
+            fish = new Fish(random.nextInt(50) + 1500, random.nextInt(910) + 25, fishType, physicsWorld, true, fishBodyData,true,counter);
             fish.setCurrentTileIndex(1);
         } else {
-            fish = new Fish(random.nextInt(50) + 25, random.nextInt(910) + 25, fishType, physicsWorld, true, "enemyFish" + counter++,false);
+            fish = new Fish(random.nextInt(50) + 25, random.nextInt(910) + 25, fishType, physicsWorld, true, fishBodyData,false,counter);
             fish.setCurrentTileIndex(0);
         }
         return fish;
