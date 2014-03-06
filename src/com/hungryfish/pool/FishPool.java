@@ -31,10 +31,10 @@ public class FishPool extends GenericPool<Fish> {
         Fish fish;
         fishType = fishType.next();
         if (random.nextBoolean()) {
-            fish = new Fish(random.nextInt(50) + 1500, random.nextInt(910) + 25, fishType, physicsWorld, true, "enemyFish" + counter++);
+            fish = new Fish(random.nextInt(50) + 1500, random.nextInt(910) + 25, fishType, physicsWorld, true, "enemyFish" + counter++,true);
             fish.setCurrentTileIndex(1);
         } else {
-            fish = new Fish(random.nextInt(50) + 25, random.nextInt(910) + 25, fishType, physicsWorld, true, "enemyFish" + counter++);
+            fish = new Fish(random.nextInt(50) + 25, random.nextInt(910) + 25, fishType, physicsWorld, true, "enemyFish" + counter++,false);
             fish.setCurrentTileIndex(0);
         }
         return fish;
@@ -56,6 +56,6 @@ public class FishPool extends GenericPool<Fish> {
      */
     @Override
     protected void onHandleObtainItem(Fish pItem) {
-        pItem.getBody().setActive(true);
+        pItem.getCurrentBody().setActive(true);
     }
 }

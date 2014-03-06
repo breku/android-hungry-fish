@@ -76,7 +76,7 @@ public class GameScene extends BaseScene implements IAccelerationListener {
     }
 
     private void createPlayer() {
-        player = new Fish(ConstantsUtil.SCREEN_WIDTH, ConstantsUtil.SCREEN_HEIGHT, FishType.YELLOW, physicsWorld, false, "player");
+        player = new Fish(ConstantsUtil.SCREEN_WIDTH, ConstantsUtil.SCREEN_HEIGHT, FishType.YELLOW, physicsWorld, false, "player",null);
 
         attachChild(player);
     }

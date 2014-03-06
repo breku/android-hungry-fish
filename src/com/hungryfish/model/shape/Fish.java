@@ -34,21 +34,24 @@ public class Fish extends AnimatedSprite {
 
     private FishType fishType;
     private FixtureDef fixtureDef;
-    private Body body;
+    private Body[] bodies;
+    private Body currentBody;
     private boolean isEnemy;
-    private boolean moving;
+    private Boolean movingLeft;
 
 
-    public Fish(final float pX, final float pY, FishType fishType, PhysicsWorld physicsWorld, boolean isEnemy, String bodyUserData) {
+    public Fish(final float pX, final float pY, FishType fishType, PhysicsWorld physicsWorld, boolean isEnemy, String bodyUserData, Boolean movingLeft) {
         super(pX, pY, ResourcesManager.getInstance().getTextureFor(fishType), ResourcesManager.getInstance().getVertexBufferObjectManager());
         this.fishType = fishType;
         this.isEnemy = isEnemy;
-        moving = false;
+        this.movingLeft = movingLeft;
+        bodies = new Body[2];
 
-        if(isEnemy){
-            this.fixtureDef = PhysicsFactory.createFixtureDef(0, 0, 0,false,CATEGORY_BIT_ENEMY,MASK_BITS_ENEMY,(short)0);
-        }else {
-            this.fixtureDef = PhysicsFactory.createFixtureDef(0, 0, 0,false,CATEGORY_BIT_PLAYER,MASK_BITS_PLAYER,(short)0);
+
+        if (isEnemy) {
+            this.fixtureDef = PhysicsFactory.createFixtureDef(0, 0, 0, false, CATEGORY_BIT_ENEMY, MASK_BITS_ENEMY, (short) 0);
+        } else {
+            this.fixtureDef = PhysicsFactory.createFixtureDef(0, 0, 0, false, CATEGORY_BIT_PLAYER, MASK_BITS_PLAYER, (short) 0);
         }
 
         createPhysics(physicsWorld, bodyUserData);
@@ -56,26 +59,69 @@ public class Fish extends AnimatedSprite {
 
     private void createPhysics(PhysicsWorld physicsWorld, String bodyUserData) {
 
-        ITriangulationAlgoritm triangulationAlgoritm =  new EarClippingTriangulator();
-        List<Vector2> triangles = triangulationAlgoritm.computeTriangles(ResourcesManager.getInstance().getVerticesFor(fishType));
-        body = PhysicsFactory.createTrianglulatedBody(physicsWorld,this,triangles, BodyDef.BodyType.DynamicBody,fixtureDef);
+        ITriangulationAlgoritm triangulationAlgoritm = new EarClippingTriangulator();
 
-//        body = PhysicsFactory.createBoxBody(physicsWorld, this, BodyDef.BodyType.DynamicBody, fixtureDef);
+        if (isEnemy) {
+            if (movingLeft) {
+                List<Vector2> triangles = triangulationAlgoritm.computeTriangles(ResourcesManager.getInstance().getVerticesFor(fishType, 1));
+                shiftBodyPoints(triangles, -0.75f, -0.25f);
+                scaleBodyPoints(triangles, 3.0f);
+                currentBody = PhysicsFactory.createTrianglulatedBody(physicsWorld, this, triangles, BodyDef.BodyType.KinematicBody, fixtureDef);
+            } else {
+                List<Vector2> triangles = triangulationAlgoritm.computeTriangles(ResourcesManager.getInstance().getVerticesFor(fishType, 0));
+                shiftBodyPoints(triangles, -0.25f, -0.25f);
+                scaleBodyPoints(triangles, 3.0f);
+                currentBody = PhysicsFactory.createTrianglulatedBody(physicsWorld, this, triangles, BodyDef.BodyType.KinematicBody, fixtureDef);
+            }
 
-        body.setUserData(bodyUserData);
-        body.setFixedRotation(true);
-
-        if(isEnemy){
-            body.setActive(false);
+            currentBody.setUserData(bodyUserData);
+            currentBody.setFixedRotation(true);
+            currentBody.setActive(false);
+            physicsWorld.registerPhysicsConnector(new PhysicsConnector(this, currentBody, true, false));
         }
 
-        physicsWorld.registerPhysicsConnector(new PhysicsConnector(this, body, true, false));
+
+        if (!isEnemy) {
+            List<Vector2> triangles = triangulationAlgoritm.computeTriangles(ResourcesManager.getInstance().getVerticesFor(fishType, 0));
+            shiftBodyPoints(triangles, -0.25f, -0.25f);
+            scaleBodyPoints(triangles, 3.0f);
+            bodies[0] = PhysicsFactory.createTrianglulatedBody(physicsWorld, this, triangles, BodyDef.BodyType.DynamicBody, fixtureDef);
+
+            triangles = triangulationAlgoritm.computeTriangles(ResourcesManager.getInstance().getVerticesFor(fishType, 1));
+            shiftBodyPoints(triangles, -0.75f, -0.25f);
+            scaleBodyPoints(triangles, 3.0f);
+            bodies[1] = PhysicsFactory.createTrianglulatedBody(physicsWorld, this, triangles, BodyDef.BodyType.DynamicBody, fixtureDef);
+
+
+            for (Body body : bodies) {
+                body.setUserData(bodyUserData);
+                body.setFixedRotation(true);
+            }
+            physicsWorld.registerPhysicsConnector(new PhysicsConnector(this, bodies[0], true, false));
+            physicsWorld.registerPhysicsConnector(new PhysicsConnector(this, bodies[1], true, false));
+
+        }
+
+    }
+
+    private void scaleBodyPoints(List<Vector2> triangles, float scale) {
+        for (Vector2 point : triangles) {
+            point.x = point.x * scale;
+            point.y = point.y * scale;
+        }
+    }
+
+    private void shiftBodyPoints(List<Vector2> vertices, float x, float y) {
+        for (Vector2 point : vertices) {
+            point.x = point.x + x;
+            point.y = point.y + y;
+        }
 
     }
 
     @Override
     public boolean collidesWith(IEntity pOtherEntity) {
-        if(!this.isEnemy){
+        if (!this.isEnemy) {
             ResourcesManager.getInstance().getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -96,33 +142,27 @@ public class Fish extends AnimatedSprite {
         float deadZone = 0.05f;
         if (data.getX() > deadZone) {
             setCurrentTileIndex(0);
+            bodies[0].setType(BodyDef.BodyType.DynamicBody);
+            bodies[1].setType(BodyDef.BodyType.KinematicBody);
         } else if (data.getX() < -deadZone) {
             setCurrentTileIndex(1);
+            bodies[0].setType(BodyDef.BodyType.KinematicBody);
+            bodies[1].setType(BodyDef.BodyType.DynamicBody);
         }
-        body.setLinearVelocity(data.getX() * fishType.getFishSpeed(), data.getY() * fishType.getFishSpeed());
+        bodies[1].setLinearVelocity(data.getX() * fishType.getFishSpeed(), data.getY() * fishType.getFishSpeed());
+        bodies[0].setLinearVelocity(data.getX() * fishType.getFishSpeed(), data.getY() * fishType.getFishSpeed());
     }
 
-    public boolean isMoving() {
-        return moving;
-    }
 
     public void swim() {
-        moving = true;
-        if (getCurrentTileIndex() == 0) {
-            // RIGHT
-            body.setLinearVelocity(fishType.getFishSpeed(), 0);
+        if (movingLeft) {
+            currentBody.setLinearVelocity(-1 * fishType.getFishSpeed(), 0);
         } else {
-            // LEFT
-            body.setLinearVelocity(-1 * fishType.getFishSpeed(), 0);
+            currentBody.setLinearVelocity(fishType.getFishSpeed(), 0);
         }
     }
 
-    public void stop() {
-        moving = false;
-        body.setLinearVelocity(0, 0);
-    }
-
-    public Body getBody() {
-        return body;
+    public Body getCurrentBody() {
+        return currentBody;
     }
 }

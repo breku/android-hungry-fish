@@ -117,7 +117,7 @@ public class ResourcesManager {
         try {
 
 
-            BufferedReader br=new BufferedReader(new InputStreamReader(activity.getAssets().open("json/fishData.json")));
+            BufferedReader br=new BufferedReader(new InputStreamReader(activity.getAssets().open("json/aaa.json")));
             jsonFishData = gson.fromJson(br,JSONFishData.class);
         } catch (FileNotFoundException e) {
             Debug.e(e);
@@ -548,11 +548,11 @@ public class ResourcesManager {
         return fishTextureMap.get(fishType);
     }
     
-    public List<Vector2> getVerticesFor(FishType fishType){
+    public List<Vector2> getVerticesFor(FishType fishType, int shapeNumber){
         List<RigidBody> rigidBodies = jsonFishData.getRigidBodies();
         for (RigidBody rigidBody : rigidBodies) {
             if(rigidBody.getName().equalsIgnoreCase(fishType.name())){
-                return rigidBody.getShapes().get(0).getVertices();
+                return rigidBody.getShapes().get(shapeNumber).getVertices();
             }
         }
         throw new UnsupportedOperationException("Fish does not exist in JSON data");
