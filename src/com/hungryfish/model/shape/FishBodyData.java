@@ -9,10 +9,20 @@ public class FishBodyData {
     private boolean toRemove = false;
     private String name;
     private Integer spriteTag;
+    private boolean isActiveBody = false;
 
     public FishBodyData(String name, Integer spriteTag) {
         this.name = name;
         this.spriteTag = spriteTag;
+
+    }
+
+    public boolean isActiveBody() {
+        return isActiveBody;
+    }
+
+    public void setActiveBody(boolean activeBody) {
+        isActiveBody = activeBody;
     }
 
     public boolean isToRemove() {

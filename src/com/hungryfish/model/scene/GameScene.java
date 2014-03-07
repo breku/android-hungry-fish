@@ -3,6 +3,8 @@ package com.hungryfish.model.scene;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.hungryfish.handler.CollisionUpdateHandler;
+import com.hungryfish.handler.FishBorderUpdateHandler;
+import com.hungryfish.handler.FishNumberUpdateHandler;
 import com.hungryfish.listener.FishContactListener;
 import com.hungryfish.manager.ResourcesManager;
 import com.hungryfish.manager.SceneManager;
@@ -43,6 +45,8 @@ public class GameScene extends BaseScene implements IAccelerationListener {
     private PhysicsWorld physicsWorld;
 
     private IUpdateHandler collisionUpdateHandler;
+    private IUpdateHandler fishRemovingUpdateHandler;
+    private IUpdateHandler fishNumberUpdateHandler;
 
 
     /**
@@ -73,6 +77,12 @@ public class GameScene extends BaseScene implements IAccelerationListener {
 
         collisionUpdateHandler = new CollisionUpdateHandler(physicsWorld, this);
         registerUpdateHandler(collisionUpdateHandler);
+
+        fishRemovingUpdateHandler = new FishBorderUpdateHandler(physicsWorld, this);
+        registerUpdateHandler(fishRemovingUpdateHandler);
+
+        fishNumberUpdateHandler = new FishNumberUpdateHandler(physicsWorld, this);
+        registerUpdateHandler(fishNumberUpdateHandler);
     }
 
     private void createDebugRenderer() {
@@ -87,14 +97,20 @@ public class GameScene extends BaseScene implements IAccelerationListener {
 
     private void createEnemy() {
         for (int i = 0; i < ConstantsUtil.NUMBER_OF_ENEMIES; i++) {
-            attachChild(fishPool.obtainPoolItem());
+            createEnemyFish();
         }
 
     }
 
+    public Fish createEnemyFish() {
+        Fish fish = fishPool.obtainPoolItem();
+        attachChild(fish);
+        return fish;
+    }
+
     private void createPlayer() {
         FishBodyData fishBodyData = new FishBodyData("player", ConstantsUtil.TAG_SPRITE_PLAYER);
-        player = new Fish(ConstantsUtil.SCREEN_WIDTH, ConstantsUtil.SCREEN_HEIGHT, FishType.YELLOW, physicsWorld, false, fishBodyData, null, ConstantsUtil.TAG_SPRITE_PLAYER);
+        player = new Fish(ConstantsUtil.SCREEN_WIDTH, ConstantsUtil.SCREEN_HEIGHT, FishType.GREEN, physicsWorld, false, fishBodyData, null, ConstantsUtil.TAG_SPRITE_PLAYER);
 
         attachChild(player);
     }
@@ -165,7 +181,7 @@ public class GameScene extends BaseScene implements IAccelerationListener {
 
     }
 
-    private List<Fish> getAllEnemyFishes() {
+    public List<Fish> getAllEnemyFishes() {
         List<Fish> result = new ArrayList<Fish>();
         for (IEntity child : mChildren) {
             if (child instanceof Fish) {

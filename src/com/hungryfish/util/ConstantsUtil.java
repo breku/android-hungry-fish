@@ -18,12 +18,15 @@ public class ConstantsUtil implements Constants, LevelConstants {
 
     public static final String MY_AD_UNIT_ID = "ca-app-pub-6574392848136998/7431396465";
 
-    public static final int POOL_SIZE = 50;
+    public static final int POOL_SIZE = 500;
 
     /**
      * Number of enemy fishes on the screen
      */
-    public static final int NUMBER_OF_ENEMIES = 30;
+    public static final int NUMBER_OF_ENEMIES = 40;
 
-    public static final int TAG_SPRITE_PLAYER = 0;
+    public static final int TAG_SPRITE_PLAYER = 1;
+
+    public static final int LEFT_BORDER = 0;
+    public static final int RIGHT_BORDER = 1600;
 }

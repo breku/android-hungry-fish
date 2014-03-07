@@ -16,7 +16,7 @@ public class FishPool extends GenericPool<Fish> {
 
     private FishType fishType = FishType.BLACK;
     private Random random = new Random();
-    private int counter = 1;
+    private int counter = 100;
     private PhysicsWorld physicsWorld;
 
     public FishPool(PhysicsWorld physicsWorld) {
@@ -35,10 +35,10 @@ public class FishPool extends GenericPool<Fish> {
 
         FishBodyData fishBodyData = new FishBodyData("enemyFish " + fishType.name() + " " + counter, counter);
         if (random.nextBoolean()) {
-            fish = new Fish(random.nextInt(50) + 1500, random.nextInt(910) + 25, fishType, physicsWorld, true, fishBodyData, true, counter);
+            fish = new Fish(random.nextInt(50) + 1800, random.nextInt(910) + 25, fishType, physicsWorld, true, fishBodyData, true, counter);
             fish.setCurrentTileIndex(1);
         } else {
-            fish = new Fish(random.nextInt(50) + 25, random.nextInt(910) + 25, fishType, physicsWorld, true, fishBodyData, false, counter);
+            fish = new Fish(random.nextInt(50) - 300, random.nextInt(910) + 25, fishType, physicsWorld, true, fishBodyData, false, counter);
             fish.setCurrentTileIndex(0);
         }
         return fish;
@@ -61,5 +61,6 @@ public class FishPool extends GenericPool<Fish> {
     @Override
     protected void onHandleObtainItem(Fish pItem) {
         pItem.getCurrentBody().setActive(true);
+        pItem.getCurrentBody().setAwake(true);
     }
 }

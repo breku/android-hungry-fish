@@ -1,6 +1,5 @@
 package com.hungryfish.model.shape;
 
-import android.widget.Toast;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -34,7 +33,6 @@ public class Fish extends AnimatedSprite {
 
     private FishType fishType;
     private FixtureDef fixtureDef;
-    private Body[] bodies;
     private Body currentBody;
     private boolean isEnemy;
     private Boolean movingLeft;
@@ -47,7 +45,6 @@ public class Fish extends AnimatedSprite {
         this.isEnemy = isEnemy;
         this.movingLeft = movingLeft;
         this.fishTag = fishTag;
-        bodies = new Body[2];
         setTag(fishTag);
 
 
@@ -69,18 +66,20 @@ public class Fish extends AnimatedSprite {
                 List<Vector2> triangles = triangulationAlgoritm.computeTriangles(ResourcesManager.getInstance().getVerticesFor(fishType, 1));
                 shiftBodyPoints(triangles, -0.75f, -0.25f);
                 scaleBodyPoints(triangles, 3.0f);
-                currentBody = PhysicsFactory.createTrianglulatedBody(physicsWorld, this, triangles, BodyDef.BodyType.KinematicBody, fixtureDef);
+                currentBody = PhysicsFactory.createTrianglulatedBody(physicsWorld, this, triangles, BodyDef.BodyType.DynamicBody, fixtureDef);
             } else {
                 List<Vector2> triangles = triangulationAlgoritm.computeTriangles(ResourcesManager.getInstance().getVerticesFor(fishType, 0));
                 shiftBodyPoints(triangles, -0.25f, -0.25f);
                 scaleBodyPoints(triangles, 3.0f);
-                currentBody = PhysicsFactory.createTrianglulatedBody(physicsWorld, this, triangles, BodyDef.BodyType.KinematicBody, fixtureDef);
+                currentBody = PhysicsFactory.createTrianglulatedBody(physicsWorld, this, triangles, BodyDef.BodyType.DynamicBody, fixtureDef);
             }
 
             currentBody.setUserData(bodyUserData);
             currentBody.setFixedRotation(true);
+            currentBody.setAwake(false);
             currentBody.setActive(false);
             physicsWorld.registerPhysicsConnector(new PhysicsConnector(this, currentBody, true, false));
+
         }
 
 
@@ -88,23 +87,24 @@ public class Fish extends AnimatedSprite {
             List<Vector2> triangles = triangulationAlgoritm.computeTriangles(ResourcesManager.getInstance().getVerticesFor(fishType, 0));
             shiftBodyPoints(triangles, -0.25f, -0.25f);
             scaleBodyPoints(triangles, 3.0f);
-            bodies[0] = PhysicsFactory.createTrianglulatedBody(physicsWorld, this, triangles, BodyDef.BodyType.DynamicBody, fixtureDef);
+            currentBody = PhysicsFactory.createTrianglulatedBody(physicsWorld, this, triangles, BodyDef.BodyType.KinematicBody, fixtureDef);
+
 
             triangles = triangulationAlgoritm.computeTriangles(ResourcesManager.getInstance().getVerticesFor(fishType, 1));
-            shiftBodyPoints(triangles, -0.75f, -0.25f);
+            shiftBodyPoints(triangles, -0.25f, -0.25f);
             scaleBodyPoints(triangles, 3.0f);
-            bodies[1] = PhysicsFactory.createTrianglulatedBody(physicsWorld, this, triangles, BodyDef.BodyType.DynamicBody, fixtureDef);
 
+            currentBody.setUserData(bodyUserData);
+            currentBody.setFixedRotation(true);
 
-            for (Body body : bodies) {
-                body.setUserData(bodyUserData);
-                body.setFixedRotation(true);
-            }
-            physicsWorld.registerPhysicsConnector(new PhysicsConnector(this, bodies[0], true, false));
-            physicsWorld.registerPhysicsConnector(new PhysicsConnector(this, bodies[1], true, false));
-
+            physicsWorld.registerPhysicsConnector(new PhysicsConnector(this, currentBody, true, false));
         }
 
+    }
+
+    @Override
+    public boolean collidesWith(IEntity pOtherEntity) {
+        return super.collidesWith(pOtherEntity);
     }
 
     private void scaleBodyPoints(List<Vector2> triangles, float scale) {
@@ -122,19 +122,6 @@ public class Fish extends AnimatedSprite {
 
     }
 
-    @Override
-    public boolean collidesWith(IEntity pOtherEntity) {
-        if (!this.isEnemy) {
-            ResourcesManager.getInstance().getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(ResourcesManager.getInstance().getActivity(), "BUM", 1).show();
-                }
-            });
-
-        }
-        return super.collidesWith(pOtherEntity);
-    }
 
     public boolean isEnemy() {
         return isEnemy;
@@ -144,16 +131,17 @@ public class Fish extends AnimatedSprite {
 
         float deadZone = 0.05f;
         if (data.getX() > deadZone) {
-            setCurrentTileIndex(0);
-            bodies[0].setType(BodyDef.BodyType.DynamicBody);
-            bodies[1].setType(BodyDef.BodyType.KinematicBody);
+            if (getCurrentTileIndex() == 1) {
+                setCurrentTileIndex(0);
+                currentBody.setTransform(currentBody.getPosition(), currentBody.getAngle() + (float) Math.toRadians(180));
+            }
         } else if (data.getX() < -deadZone) {
-            setCurrentTileIndex(1);
-            bodies[0].setType(BodyDef.BodyType.KinematicBody);
-            bodies[1].setType(BodyDef.BodyType.DynamicBody);
+            if (getCurrentTileIndex() == 0) {
+                setCurrentTileIndex(1);
+                currentBody.setTransform(currentBody.getPosition(), currentBody.getAngle() + (float) Math.toRadians(180));
+            }
         }
-        bodies[1].setLinearVelocity(data.getX() * fishType.getFishSpeed(), data.getY() * fishType.getFishSpeed());
-        bodies[0].setLinearVelocity(data.getX() * fishType.getFishSpeed(), data.getY() * fishType.getFishSpeed());
+        currentBody.setLinearVelocity(data.getX() * fishType.getFishSpeed(), data.getY() * fishType.getFishSpeed());
     }
 
 
@@ -171,5 +159,23 @@ public class Fish extends AnimatedSprite {
 
     public Integer getFishTag() {
         return fishTag;
+    }
+
+    public void switchSwimmingDirection() {
+        if (getCurrentTileIndex() == 0) {
+            setCurrentTileIndex(1);
+        } else if (getCurrentTileIndex() == 1) {
+            setCurrentTileIndex(0);
+        }
+        movingLeft = !movingLeft;
+        currentBody.setTransform(currentBody.getPosition(), currentBody.getAngle() + (float) Math.toRadians(180));
+    }
+
+    public void stopSwimming() {
+        currentBody.setLinearVelocity(0, 0);
+    }
+
+    public boolean isMovingLeft() {
+        return movingLeft;
     }
 }

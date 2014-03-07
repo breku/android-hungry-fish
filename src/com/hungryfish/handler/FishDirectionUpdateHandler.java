@@ -4,6 +4,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.hungryfish.model.scene.BaseScene;
 import com.hungryfish.model.shape.Fish;
 import com.hungryfish.model.shape.FishBodyData;
+import com.hungryfish.util.ConstantsUtil;
 import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 
@@ -11,38 +12,40 @@ import java.util.Iterator;
 
 /**
  * User: Breku
- * Date: 06.03.14
+ * Date: 07.03.14
  */
-public class CollisionUpdateHandler implements IUpdateHandler {
+public class FishDirectionUpdateHandler implements IUpdateHandler {
 
     private PhysicsWorld physicsWorld;
     private BaseScene gameScene;
 
-    public CollisionUpdateHandler(PhysicsWorld physicsWorld, BaseScene gameScene) {
+    public FishDirectionUpdateHandler(PhysicsWorld physicsWorld, BaseScene gameScene) {
         this.physicsWorld = physicsWorld;
         this.gameScene = gameScene;
     }
 
-
     @Override
     public void onUpdate(float pSecondsElapsed) {
+
         Iterator<Body> bodyIterator = physicsWorld.getBodies();
 
         while (bodyIterator.hasNext()) {
             Body body = bodyIterator.next();
-
-            // TODO check why body is sometimes null
-            if (body != null && body.getUserData() instanceof FishBodyData) {
+            if (body.getUserData() instanceof FishBodyData) {
 
                 FishBodyData userData = (FishBodyData) body.getUserData();
-                if (userData.isToRemove()) {
+                Fish fish = (Fish) gameScene.getChildByTag(userData.getSpriteTag());
 
-                    Fish fish = (Fish) gameScene.getChildByTag(userData.getSpriteTag());
-                    fish.detachSelf();
-                    fish.dispose();
-                    physicsWorld.destroyBody(body);
+                if (fish != null && fish.isEnemy()) {
+
+                    if ((fish.getX() > ConstantsUtil.RIGHT_BORDER && !fish.isMovingLeft()) ||
+                            (fish.getX() < ConstantsUtil.LEFT_BORDER && fish.isMovingLeft())) {
+
+                        fish.stopSwimming();
+                        fish.switchSwimmingDirection();
+                        fish.swim();
+                    }
                 }
-
             }
         }
     }
