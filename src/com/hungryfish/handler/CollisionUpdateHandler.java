@@ -42,7 +42,7 @@ public class CollisionUpdateHandler implements IUpdateHandler {
                     fish.dispose();
                     physicsWorld.destroyBody(body);
 
-                    if(userData.isKilled()){
+                    if (userData.isKilled()) {
                         gameScene.addOneEnemy();
                     }
                 }

@@ -63,7 +63,6 @@ public class GameScene extends BaseScene implements IAccelerationListener {
     private Integer numberOfEeatenFishes;
 
 
-
     public GameScene(Object... objects) {
         super(objects);
     }
@@ -108,8 +107,8 @@ public class GameScene extends BaseScene implements IAccelerationListener {
 
         Iterator<Line> lineIterator = lineList.iterator();
         Iterator<Body> bodyIterator = bodyList.iterator();
-        while (bodyIterator.hasNext() && lineIterator.hasNext()){
-            physicsWorld.registerPhysicsConnector(new PhysicsConnector(lineIterator.next(),bodyIterator.next()));
+        while (bodyIterator.hasNext() && lineIterator.hasNext()) {
+            physicsWorld.registerPhysicsConnector(new PhysicsConnector(lineIterator.next(), bodyIterator.next()));
         }
 
         for (Line line : lineList) {
@@ -184,8 +183,8 @@ public class GameScene extends BaseScene implements IAccelerationListener {
 
         numberOfEeatenFishes = 0;
 
-        numberOfEatenFishesTextStatic = new Text(80,460,ResourcesManager.getInstance().getBlackFont(),"Eaten fishes:", vertexBufferObjectManager);
-        numberOfEatenFishesTextDynamic = new Text(150,460,ResourcesManager.getInstance().getBlackFont(),"0123456789", vertexBufferObjectManager, DrawType.DYNAMIC);
+        numberOfEatenFishesTextStatic = new Text(80, 460, ResourcesManager.getInstance().getBlackFont(), "Eaten fishes:", vertexBufferObjectManager);
+        numberOfEatenFishesTextDynamic = new Text(150, 460, ResourcesManager.getInstance().getBlackFont(), "0123456789", vertexBufferObjectManager, DrawType.DYNAMIC);
         numberOfEatenFishesTextDynamic.setText("0");
 
     }
@@ -242,12 +241,12 @@ public class GameScene extends BaseScene implements IAccelerationListener {
 
     }
 
-    public void addOneEnemy(){
+    public void addOneEnemy() {
         numberOfEeatenFishes++;
     }
 
     private void updateNumberOfEatenFishesText() {
-        if(Integer.valueOf(numberOfEatenFishesTextDynamic.getText().toString()) !=numberOfEeatenFishes){
+        if (Integer.valueOf(numberOfEatenFishesTextDynamic.getText().toString()) != numberOfEeatenFishes) {
             numberOfEatenFishesTextDynamic.setText(String.valueOf(numberOfEeatenFishes));
         }
     }

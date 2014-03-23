@@ -21,7 +21,6 @@ public class ConstantsUtil implements Constants, LevelConstants {
     public static final int POOL_SIZE = 10;
 
 
-
     /**
      * Number of enemy fishes on the screen
      */

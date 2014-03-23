@@ -25,14 +25,12 @@ import java.util.List;
 public class Fish extends AnimatedSprite {
 
 
-
     private FishType fishType;
     private FixtureDef fixtureDef;
     private Body currentBody;
     private boolean isEnemy;
     private Boolean movingLeft;
     private Integer fishTag;
-
 
 
     public Fish(final float pX, final float pY, FishType fishType, PhysicsWorld physicsWorld, boolean isEnemy, FishBodyData fishBodyData, Boolean movingLeft, Integer fishTag) {
