@@ -1,7 +1,9 @@
 package com.hungryfish.model.scene;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.hungryfish.handler.CollisionUpdateHandler;
 import com.hungryfish.handler.FishBorderUpdateHandler;
 import com.hungryfish.handler.FishNumberUpdateHandler;
@@ -19,13 +21,17 @@ import org.andengine.engine.camera.BoundCamera;
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.entity.IEntity;
+import org.andengine.entity.primitive.Line;
 import org.andengine.entity.sprite.Sprite;
+import org.andengine.extension.physics.box2d.PhysicsConnector;
+import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.extension.physics.box2d.util.debugdraw.Box2dDebugRenderer;
 import org.andengine.input.sensor.acceleration.AccelerationData;
 import org.andengine.input.sensor.acceleration.IAccelerationListener;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -49,10 +55,6 @@ public class GameScene extends BaseScene implements IAccelerationListener {
     private IUpdateHandler fishNumberUpdateHandler;
 
 
-    /**
-     * @param objects objects[0] - levelDifficulty
-     *                objects[1] - mathParameter
-     */
     public GameScene(Object... objects) {
         super(objects);
     }
@@ -66,9 +68,45 @@ public class GameScene extends BaseScene implements IAccelerationListener {
         createBackground();
         createPlayer();
         createEnemy();
-        createHUD();
+        createTerrain();
         activateCollisions();
+        createHUD();
+
 //        createDebugRenderer();
+    }
+
+    private void createTerrain() {
+
+        List<Line> lineList = new ArrayList<Line>();
+
+        // top, bottom, left, right
+        lineList.add(new Line(ConstantsUtil.LEFT_BORDER, ConstantsUtil.TOP_BORDER, ConstantsUtil.RIGHT_BORDER, ConstantsUtil.TOP_BORDER, vertexBufferObjectManager));
+        lineList.add(new Line(ConstantsUtil.LEFT_BORDER, ConstantsUtil.BOTTOM_BORDER, ConstantsUtil.RIGHT_BORDER, ConstantsUtil.BOTTOM_BORDER, vertexBufferObjectManager));
+        lineList.add(new Line(ConstantsUtil.LEFT_BORDER, ConstantsUtil.BOTTOM_BORDER, ConstantsUtil.LEFT_BORDER, ConstantsUtil.TOP_BORDER, vertexBufferObjectManager));
+        lineList.add(new Line(ConstantsUtil.RIGHT_BORDER, ConstantsUtil.BOTTOM_BORDER, ConstantsUtil.RIGHT_BORDER, ConstantsUtil.TOP_BORDER, vertexBufferObjectManager));
+
+
+        List<Body> bodyList = new ArrayList<Body>();
+
+
+        FixtureDef fixtureDef = PhysicsFactory.createFixtureDef(0, 0, 0, false,
+                ConstantsUtil.CATEGORY_BIT_WALL, ConstantsUtil.MASK_BITS_WALL, (short) 0);
+
+        // top, bottom, left, right
+        for (Line line : lineList) {
+            bodyList.add(PhysicsFactory.createLineBody(physicsWorld, line, fixtureDef));
+        }
+
+        Iterator<Line> lineIterator = lineList.iterator();
+        Iterator<Body> bodyIterator = bodyList.iterator();
+        while (bodyIterator.hasNext() && lineIterator.hasNext()){
+            physicsWorld.registerPhysicsConnector(new PhysicsConnector(lineIterator.next(),bodyIterator.next()));
+        }
+
+        for (Line line : lineList) {
+            line.setVisible(false);
+            attachChild(line);
+        }
     }
 
     private void activateCollisions() {
@@ -110,7 +148,7 @@ public class GameScene extends BaseScene implements IAccelerationListener {
 
     private void createPlayer() {
         FishBodyData fishBodyData = new FishBodyData("player", ConstantsUtil.TAG_SPRITE_PLAYER);
-        player = new Fish(ConstantsUtil.SCREEN_WIDTH, ConstantsUtil.SCREEN_HEIGHT, FishType.GREEN, physicsWorld, false, fishBodyData, null, ConstantsUtil.TAG_SPRITE_PLAYER);
+        player = new Fish(ConstantsUtil.SCREEN_WIDTH, ConstantsUtil.SCREEN_HEIGHT, FishType.PURPLE, physicsWorld, false, fishBodyData, null, ConstantsUtil.TAG_SPRITE_PLAYER);
 
         attachChild(player);
     }

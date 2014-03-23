@@ -15,13 +15,19 @@ public class FishContactListener implements ContactListener {
         final Fixture x2 = contact.getFixtureB();
 
 
-        FishBodyData x1Data = ((FishBodyData) x1.getBody().getUserData());
-        FishBodyData x2Data = ((FishBodyData) x2.getBody().getUserData());
+        if (x1 != null && x2 != null &&
+                x1.getBody().getUserData() instanceof FishBodyData &&
+                x2.getBody().getUserData() instanceof FishBodyData) {
+
+            FishBodyData x1Data = ((FishBodyData) x1.getBody().getUserData());
+            FishBodyData x2Data = ((FishBodyData) x2.getBody().getUserData());
 
 
-        if (x1Data.getName().equals("player") && x2Data.getName().contains("enemy")) {
-            x2Data.setToRemove(true);
+            if (x1Data.getName().equals("player") && x2Data.getName().contains("enemy")) {
+                x2Data.setToRemove(true);
+            }
         }
+
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.hungryfish.manager.ResourcesManager;
+import com.hungryfish.util.ConstantsUtil;
 import com.hungryfish.util.FishType;
 import org.andengine.entity.IEntity;
 import org.andengine.entity.sprite.AnimatedSprite;
@@ -23,13 +24,7 @@ import java.util.List;
  */
 public class Fish extends AnimatedSprite {
 
-    /* The categories. */
-    public static final short CATEGORY_BIT_PLAYER = 1;
-    public static final short CATEGORY_BIT_ENEMY = 2;
 
-    /* And what should collide with what. */
-    public static final short MASK_BITS_PLAYER = CATEGORY_BIT_ENEMY;
-    public static final short MASK_BITS_ENEMY = CATEGORY_BIT_PLAYER;
 
     private FishType fishType;
     private FixtureDef fixtureDef;
@@ -37,6 +32,7 @@ public class Fish extends AnimatedSprite {
     private boolean isEnemy;
     private Boolean movingLeft;
     private Integer fishTag;
+
 
 
     public Fish(final float pX, final float pY, FishType fishType, PhysicsWorld physicsWorld, boolean isEnemy, FishBodyData fishBodyData, Boolean movingLeft, Integer fishTag) {
@@ -49,9 +45,11 @@ public class Fish extends AnimatedSprite {
 
 
         if (isEnemy) {
-            this.fixtureDef = PhysicsFactory.createFixtureDef(0, 0, 0, false, CATEGORY_BIT_ENEMY, MASK_BITS_ENEMY, (short) 0);
+            this.fixtureDef = PhysicsFactory.createFixtureDef(0, 0, 0, false,
+                    ConstantsUtil.CATEGORY_BIT_ENEMY, ConstantsUtil.MASK_BITS_ENEMY, (short) 0);
         } else {
-            this.fixtureDef = PhysicsFactory.createFixtureDef(0, 0, 0, false, CATEGORY_BIT_PLAYER, MASK_BITS_PLAYER, (short) 0);
+            this.fixtureDef = PhysicsFactory.createFixtureDef(0, 0, 0, false,
+                    ConstantsUtil.CATEGORY_BIT_PLAYER, ConstantsUtil.MASK_BITS_PLAYER, (short) 0);
         }
 
         createPhysics(physicsWorld, fishBodyData);
@@ -87,7 +85,7 @@ public class Fish extends AnimatedSprite {
             List<Vector2> triangles = triangulationAlgoritm.computeTriangles(ResourcesManager.getInstance().getVerticesFor(fishType, 0));
             shiftBodyPoints(triangles, -0.25f, -0.25f);
             scaleBodyPoints(triangles, 3.0f);
-            currentBody = PhysicsFactory.createTrianglulatedBody(physicsWorld, this, triangles, BodyDef.BodyType.KinematicBody, fixtureDef);
+            currentBody = PhysicsFactory.createTrianglulatedBody(physicsWorld, this, triangles, BodyDef.BodyType.DynamicBody, fixtureDef);
 
 
             triangles = triangulationAlgoritm.computeTriangles(ResourcesManager.getInstance().getVerticesFor(fishType, 1));
@@ -142,6 +140,7 @@ public class Fish extends AnimatedSprite {
             }
         }
         currentBody.setLinearVelocity(data.getX() * fishType.getFishSpeed(), data.getY() * fishType.getFishSpeed());
+
     }
 
 

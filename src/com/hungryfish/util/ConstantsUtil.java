@@ -18,15 +18,32 @@ public class ConstantsUtil implements Constants, LevelConstants {
 
     public static final String MY_AD_UNIT_ID = "ca-app-pub-6574392848136998/7431396465";
 
-    public static final int POOL_SIZE = 500;
+    public static final int POOL_SIZE = 10;
+
+
 
     /**
      * Number of enemy fishes on the screen
      */
-    public static final int NUMBER_OF_ENEMIES = 40;
+    public static final int NUMBER_OF_ENEMIES = 20;
 
     public static final int TAG_SPRITE_PLAYER = 1;
 
     public static final int LEFT_BORDER = 0;
     public static final int RIGHT_BORDER = 1600;
+    public static final int TOP_BORDER = 960;
+    public static final int BOTTOM_BORDER = 0;
+
+
+    /* The categories. */
+    public static final short CATEGORY_BIT_PLAYER = 1;
+    public static final short CATEGORY_BIT_ENEMY = 2;
+    public static final short CATEGORY_BIT_WALL = 4;
+
+
+    /* And what should collide with what. */
+    public static final short MASK_BITS_PLAYER = CATEGORY_BIT_ENEMY + CATEGORY_BIT_WALL;
+    public static final short MASK_BITS_ENEMY = CATEGORY_BIT_PLAYER;
+    public static final short MASK_BITS_WALL = CATEGORY_BIT_PLAYER;
+
 }
