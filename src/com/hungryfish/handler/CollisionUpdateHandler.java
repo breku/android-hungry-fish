@@ -1,7 +1,7 @@
 package com.hungryfish.handler;
 
 import com.badlogic.gdx.physics.box2d.Body;
-import com.hungryfish.model.scene.BaseScene;
+import com.hungryfish.model.scene.GameScene;
 import com.hungryfish.model.shape.Fish;
 import com.hungryfish.model.shape.FishBodyData;
 import org.andengine.engine.handler.IUpdateHandler;
@@ -16,9 +16,9 @@ import java.util.Iterator;
 public class CollisionUpdateHandler implements IUpdateHandler {
 
     private PhysicsWorld physicsWorld;
-    private BaseScene gameScene;
+    private GameScene gameScene;
 
-    public CollisionUpdateHandler(PhysicsWorld physicsWorld, BaseScene gameScene) {
+    public CollisionUpdateHandler(PhysicsWorld physicsWorld, GameScene gameScene) {
         this.physicsWorld = physicsWorld;
         this.gameScene = gameScene;
     }
@@ -41,6 +41,10 @@ public class CollisionUpdateHandler implements IUpdateHandler {
                     fish.detachSelf();
                     fish.dispose();
                     physicsWorld.destroyBody(body);
+
+                    if(userData.isKilled()){
+                        gameScene.addOneEnemy();
+                    }
                 }
 
             }

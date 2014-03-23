@@ -31,7 +31,7 @@ public class ConstantsUtil implements Constants, LevelConstants {
 
     public static final int LEFT_BORDER = 0;
     public static final int RIGHT_BORDER = 1600;
-    public static final int TOP_BORDER = 960;
+    public static final int TOP_BORDER = 920;
     public static final int BOTTOM_BORDER = 0;
 
 

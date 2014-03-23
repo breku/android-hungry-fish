@@ -2,6 +2,7 @@ package com.hungryfish.pool;
 
 import com.hungryfish.model.shape.Fish;
 import com.hungryfish.model.shape.FishBodyData;
+import com.hungryfish.util.ConstantsUtil;
 import com.hungryfish.util.FishType;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.util.adt.pool.GenericPool;
@@ -35,10 +36,12 @@ public class FishPool extends GenericPool<Fish> {
 
         FishBodyData fishBodyData = new FishBodyData("enemyFish " + fishType.name() + " " + counter, counter);
         if (random.nextBoolean()) {
-            fish = new Fish(random.nextInt(50) + 1800, random.nextInt(910) + 25, fishType, physicsWorld, true, fishBodyData, true, counter);
+            fish = new Fish(random.nextInt(50) + ConstantsUtil.RIGHT_BORDER + 200, random.nextInt(ConstantsUtil.TOP_BORDER - ConstantsUtil.BOTTOM_BORDER - 50) + 25,
+                    fishType, physicsWorld, true, fishBodyData, true, counter);
             fish.setCurrentTileIndex(1);
         } else {
-            fish = new Fish(random.nextInt(50) - 300, random.nextInt(910) + 25, fishType, physicsWorld, true, fishBodyData, false, counter);
+            fish = new Fish(random.nextInt(50) + ConstantsUtil.LEFT_BORDER - 200, random.nextInt(ConstantsUtil.TOP_BORDER - ConstantsUtil.BOTTOM_BORDER - 25) + 25,
+                    fishType, physicsWorld, true, fishBodyData, false, counter);
             fish.setCurrentTileIndex(0);
         }
         return fish;

@@ -22,13 +22,17 @@ import org.andengine.engine.camera.hud.HUD;
 import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.entity.IEntity;
 import org.andengine.entity.primitive.Line;
+import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.sprite.Sprite;
+import org.andengine.entity.text.Text;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.extension.physics.box2d.util.debugdraw.Box2dDebugRenderer;
 import org.andengine.input.sensor.acceleration.AccelerationData;
 import org.andengine.input.sensor.acceleration.IAccelerationListener;
+import org.andengine.opengl.vbo.DrawType;
+import org.andengine.util.adt.color.Color;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -53,6 +57,11 @@ public class GameScene extends BaseScene implements IAccelerationListener {
     private IUpdateHandler collisionUpdateHandler;
     private IUpdateHandler fishRemovingUpdateHandler;
     private IUpdateHandler fishNumberUpdateHandler;
+
+    private Text numberOfEatenFishesTextStatic;
+    private Text numberOfEatenFishesTextDynamic;
+    private Integer numberOfEeatenFishes;
+
 
 
     public GameScene(Object... objects) {
@@ -173,11 +182,22 @@ public class GameScene extends BaseScene implements IAccelerationListener {
 
         firstTimeCounter = 0;
 
+        numberOfEeatenFishes = 0;
+
+        numberOfEatenFishesTextStatic = new Text(80,460,ResourcesManager.getInstance().getBlackFont(),"Eaten fishes:", vertexBufferObjectManager);
+        numberOfEatenFishesTextDynamic = new Text(150,460,ResourcesManager.getInstance().getBlackFont(),"0123456789", vertexBufferObjectManager, DrawType.DYNAMIC);
+        numberOfEatenFishesTextDynamic.setText("0");
+
     }
 
 
     private void createHUD() {
         gameHUD = new HUD();
+        Rectangle gameHudRectangle = new Rectangle(400, 460, 800, 40, vertexBufferObjectManager);
+        gameHudRectangle.setColor(Color.WHITE);
+        gameHUD.attachChild(gameHudRectangle);
+        gameHUD.attachChild(numberOfEatenFishesTextStatic);
+        gameHUD.attachChild(numberOfEatenFishesTextDynamic);
         camera.setHUD(gameHUD);
         camera.setChaseEntity(player);
         ((BoundCamera) camera).setBounds(0, 0, ConstantsUtil.SCREEN_WIDTH * 2, ConstantsUtil.SCREEN_HEIGHT * 2);
@@ -215,9 +235,23 @@ public class GameScene extends BaseScene implements IAccelerationListener {
             }
         }
 
+        updateNumberOfEatenFishesText();
+
+
         player.updatePosition(accelerationData);
 
     }
+
+    public void addOneEnemy(){
+        numberOfEeatenFishes++;
+    }
+
+    private void updateNumberOfEatenFishesText() {
+        if(Integer.valueOf(numberOfEatenFishesTextDynamic.getText().toString()) !=numberOfEeatenFishes){
+            numberOfEatenFishesTextDynamic.setText(String.valueOf(numberOfEeatenFishes));
+        }
+    }
+
 
     public List<Fish> getAllEnemyFishes() {
         List<Fish> result = new ArrayList<Fish>();

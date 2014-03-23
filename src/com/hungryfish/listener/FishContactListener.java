@@ -25,6 +25,7 @@ public class FishContactListener implements ContactListener {
 
             if (x1Data.getName().equals("player") && x2Data.getName().contains("enemy")) {
                 x2Data.setToRemove(true);
+                x2Data.setKilled(true);
             }
         }
 

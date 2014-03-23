@@ -10,6 +10,7 @@ public class FishBodyData {
     private String name;
     private Integer spriteTag;
     private boolean isActiveBody = false;
+    private boolean killed = false;
 
     public FishBodyData(String name, Integer spriteTag) {
         this.name = name;
@@ -47,5 +48,13 @@ public class FishBodyData {
 
     public void setSpriteTag(Integer spriteTag) {
         this.spriteTag = spriteTag;
+    }
+
+    public boolean isKilled() {
+        return killed;
+    }
+
+    public void setKilled(boolean killed) {
+        this.killed = killed;
     }
 }
