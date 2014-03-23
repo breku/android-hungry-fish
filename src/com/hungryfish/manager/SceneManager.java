@@ -4,6 +4,7 @@ import com.google.ads.AdView;
 import com.hungryfish.activity.MyActivity;
 import com.hungryfish.model.scene.*;
 import com.hungryfish.util.ConstantsUtil;
+import com.hungryfish.util.FishType;
 import com.hungryfish.util.SceneType;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
@@ -117,7 +118,7 @@ public class SceneManager {
         ResourcesManager.getInstance().unloadMenuTextures();
     }
 
-    public void loadGameScene() {
+    public void loadGameScene(final FishType fishType) {
         setScene(loadingScene);
         ResourcesManager.getInstance().unloadGameTypeTextures();
         ResourcesManager.getInstance().getEngine().registerUpdateHandler(new TimerHandler(ConstantsUtil.LOADING_SCENE_TIME, new ITimerCallback() {
@@ -125,7 +126,7 @@ public class SceneManager {
             public void onTimePassed(TimerHandler pTimerHandler) {
                 ResourcesManager.getInstance().getEngine().unregisterUpdateHandler(pTimerHandler);
                 ResourcesManager.getInstance().loadGameResources();
-                gameScene = new GameScene();
+                gameScene = new GameScene(fishType);
                 setScene(gameScene);
             }
         }));

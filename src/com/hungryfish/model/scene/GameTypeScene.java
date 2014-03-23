@@ -3,6 +3,7 @@ package com.hungryfish.model.scene;
 
 import com.hungryfish.manager.ResourcesManager;
 import com.hungryfish.manager.SceneManager;
+import com.hungryfish.model.shape.Fish;
 import com.hungryfish.util.ConstantsUtil;
 import com.hungryfish.util.FishType;
 import com.hungryfish.util.SceneType;
@@ -26,7 +27,7 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
     private final int LEFT_BUTTON = 1;
     private final int RIGHT_BUTTON = 2;
 
-    private List<Sprite> fishSpriteList;
+    private List<Fish> fishSpriteList;
     private Integer currentFishSpriteIndex;
 
 
@@ -40,7 +41,7 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
 
     private void createFishGraphics() {
         for (FishType fishType : FishType.values()) {
-            Sprite fish = new Sprite(400,240,ResourcesManager.getInstance().getTextureFor(fishType),vertexBufferObjectManager);
+            Fish fish = new Fish(400,240,fishType);
             fish.setVisible(false);
             fishSpriteList.add(fish);
             attachChild(fish);
@@ -49,7 +50,7 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
     }
 
     private void init() {
-        fishSpriteList = new ArrayList<Sprite>();
+        fishSpriteList = new ArrayList<Fish>();
         currentFishSpriteIndex = 0;
     }
 
@@ -95,13 +96,17 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
 
     @Override
     public void disposeScene() {
+        for (Sprite sprite : fishSpriteList) {
+            detachChild(sprite);
+            sprite = null;
+        }
     }
 
     @Override
     public boolean onMenuItemClicked(MenuScene pMenuScene, IMenuItem pMenuItem, float pMenuItemLocalX, float pMenuItemLocalY) {
         switch (pMenuItem.getID()) {
             case PLAY_BUTTON:
-                SceneManager.getInstance().loadGameScene();
+                SceneManager.getInstance().loadGameScene(fishSpriteList.get(currentFishSpriteIndex).getFishType());
                 break;
             case RIGHT_BUTTON:
                 changeFishRight();

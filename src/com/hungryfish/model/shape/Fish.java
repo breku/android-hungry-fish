@@ -33,6 +33,11 @@ public class Fish extends AnimatedSprite {
     private Integer fishTag;
 
 
+    public Fish(float pX, float pY, FishType fishType) {
+        super(pX, pY, ResourcesManager.getInstance().getTextureFor(fishType), ResourcesManager.getInstance().getVertexBufferObjectManager());
+        this.fishType = fishType;
+    }
+
     public Fish(final float pX, final float pY, FishType fishType, PhysicsWorld physicsWorld, boolean isEnemy, FishBodyData fishBodyData, Boolean movingLeft, Integer fishTag) {
         super(pX, pY, ResourcesManager.getInstance().getTextureFor(fishType), ResourcesManager.getInstance().getVertexBufferObjectManager());
         this.fishType = fishType;
@@ -174,5 +179,9 @@ public class Fish extends AnimatedSprite {
 
     public boolean isMovingLeft() {
         return movingLeft;
+    }
+
+    public FishType getFishType() {
+        return fishType;
     }
 }

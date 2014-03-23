@@ -63,6 +63,7 @@ public class GameScene extends BaseScene implements IAccelerationListener {
     private Integer numberOfEeatenFishes;
 
 
+    // objects[0] - FishType
     public GameScene(Object... objects) {
         super(objects);
     }
@@ -74,7 +75,7 @@ public class GameScene extends BaseScene implements IAccelerationListener {
         initPhysics();
         init(objects);
         createBackground();
-        createPlayer();
+        createPlayer((FishType) objects[0]);
         createEnemy();
         createTerrain();
         activateCollisions();
@@ -154,9 +155,9 @@ public class GameScene extends BaseScene implements IAccelerationListener {
         return fish;
     }
 
-    private void createPlayer() {
+    private void createPlayer(FishType fishType) {
         FishBodyData fishBodyData = new FishBodyData("player", ConstantsUtil.TAG_SPRITE_PLAYER);
-        player = new Fish(ConstantsUtil.SCREEN_WIDTH, ConstantsUtil.SCREEN_HEIGHT, FishType.PURPLE, physicsWorld, false, fishBodyData, null, ConstantsUtil.TAG_SPRITE_PLAYER);
+        player = new Fish(ConstantsUtil.SCREEN_WIDTH, ConstantsUtil.SCREEN_HEIGHT, fishType, physicsWorld, false, fishBodyData, null, ConstantsUtil.TAG_SPRITE_PLAYER);
 
         attachChild(player);
     }
