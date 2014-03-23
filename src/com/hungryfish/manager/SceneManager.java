@@ -27,8 +27,7 @@ public class SceneManager {
 
     public void setScene(BaseScene scene) {
 
-        if (scene instanceof GameScene || scene instanceof GameTypeScene || scene instanceof HighScoreScene
-                || scene instanceof AboutScene) {
+        if (scene instanceof GameScene ) {
             ResourcesManager.getInstance().getActivity().runOnUiThread(
                     new Runnable() {
                         @Override

@@ -4,12 +4,16 @@ package com.hungryfish.model.scene;
 import com.hungryfish.manager.ResourcesManager;
 import com.hungryfish.manager.SceneManager;
 import com.hungryfish.util.ConstantsUtil;
+import com.hungryfish.util.FishType;
 import com.hungryfish.util.SceneType;
 import org.andengine.entity.scene.menu.MenuScene;
 import org.andengine.entity.scene.menu.item.IMenuItem;
 import org.andengine.entity.scene.menu.item.SpriteMenuItem;
 import org.andengine.entity.scene.menu.item.decorator.ScaleMenuItemDecorator;
 import org.andengine.entity.sprite.Sprite;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User: Breku
@@ -18,15 +22,35 @@ import org.andengine.entity.sprite.Sprite;
 public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemClickListener {
 
     private MenuScene menuScene;
-    private final int CLASSIC_GAME = 0;
-    private final int HALFMARATHON_GAME = 1;
-    private final int MARATHON_GAME = 2;
+    private final int PLAY_BUTTON = 0;
+    private final int LEFT_BUTTON = 1;
+    private final int RIGHT_BUTTON = 2;
+
+    private List<Sprite> fishSpriteList;
+    private Integer currentFishSpriteIndex;
 
 
     @Override
     public void createScene(Object... objects) {
+        init();
         createBackground();
         createButtons();
+        createFishGraphics();
+    }
+
+    private void createFishGraphics() {
+        for (FishType fishType : FishType.values()) {
+            Sprite fish = new Sprite(400,240,ResourcesManager.getInstance().getTextureFor(fishType),vertexBufferObjectManager);
+            fish.setVisible(false);
+            fishSpriteList.add(fish);
+            attachChild(fish);
+        }
+        fishSpriteList.get(currentFishSpriteIndex).setVisible(true);
+    }
+
+    private void init() {
+        fishSpriteList = new ArrayList<Sprite>();
+        currentFishSpriteIndex = 0;
     }
 
     private void createBackground() {
@@ -37,14 +61,20 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
         menuScene = new MenuScene(camera);
         menuScene.setPosition(0, 0);
 
-        final IMenuItem classicGameItem = new ScaleMenuItemDecorator(new SpriteMenuItem(CLASSIC_GAME, ResourcesManager.getInstance().getPlayButtonTextureRegion(), vertexBufferObjectManager), 1.2f, 1);
+        final IMenuItem playMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(PLAY_BUTTON, ResourcesManager.getInstance().getPlayButtonTextureRegion(), vertexBufferObjectManager), 1.2f, 1);
+        final IMenuItem rightButtonMenuItem= new ScaleMenuItemDecorator(new SpriteMenuItem(RIGHT_BUTTON, ResourcesManager.getInstance().getRightArrowTextureRegion(), vertexBufferObjectManager), 1.2f, 1);
+        final IMenuItem leftButtonMenuItem= new ScaleMenuItemDecorator(new SpriteMenuItem(LEFT_BUTTON, ResourcesManager.getInstance().getLeftArrowTextureRegion(), vertexBufferObjectManager), 1.2f, 1);
 
-        menuScene.addMenuItem(classicGameItem);
+        menuScene.addMenuItem(playMenuItem);
+        menuScene.addMenuItem(leftButtonMenuItem);
+        menuScene.addMenuItem(rightButtonMenuItem);
 
         menuScene.buildAnimations();
         menuScene.setBackgroundEnabled(false);
 
-        classicGameItem.setPosition(400, 317);
+        playMenuItem.setPosition(400, 100);
+        leftButtonMenuItem.setPosition(200, 240);
+        rightButtonMenuItem.setPosition(600, 240);
 
         menuScene.setOnMenuItemClickListener(this);
 
@@ -70,12 +100,34 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
     @Override
     public boolean onMenuItemClicked(MenuScene pMenuScene, IMenuItem pMenuItem, float pMenuItemLocalX, float pMenuItemLocalY) {
         switch (pMenuItem.getID()) {
-            case CLASSIC_GAME:
+            case PLAY_BUTTON:
                 SceneManager.getInstance().loadGameScene();
+                break;
+            case RIGHT_BUTTON:
+                changeFishRight();
+                break;
+            case LEFT_BUTTON:
+                changeFishLeft();
                 break;
             default:
                 return false;
         }
         return false;
+    }
+
+    private void changeFishLeft() {
+        fishSpriteList.get(currentFishSpriteIndex).setVisible(false);
+        if(currentFishSpriteIndex == 0){
+            currentFishSpriteIndex = fishSpriteList.size()-1;
+        }else {
+            currentFishSpriteIndex--;
+        }
+        fishSpriteList.get(currentFishSpriteIndex).setVisible(true);
+    }
+
+    private void changeFishRight() {
+        fishSpriteList.get(currentFishSpriteIndex).setVisible(false);
+        currentFishSpriteIndex = (currentFishSpriteIndex + 1) % fishSpriteList.size();
+        fishSpriteList.get(currentFishSpriteIndex).setVisible(true);
     }
 }

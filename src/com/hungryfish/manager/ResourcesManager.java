@@ -78,7 +78,7 @@ public class ResourcesManager {
 
     // Game Type
     private ITextureRegion backgroundGameTypeTextureRegion, starGoldTextureRegion, starWhiteTextureRegion,
-            playButtonTextureRegion;
+            playButtonTextureRegion, leftArrowTextureRegion, rightArrowTextureRegion;
 
 
     private List<Sound> winSoundList, loseSoundList, halfWinSoundList;
@@ -139,6 +139,7 @@ public class ResourcesManager {
 
     public void loadGameTypeResources() {
         loadGameTypeGraphics();
+        loadGameGraphics();
     }
 
     private void loadGameTypeGraphics() {
@@ -154,6 +155,8 @@ public class ResourcesManager {
         starGoldTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTypeTextureAtlas, activity, "goldStar.png");
         starWhiteTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTypeTextureAtlas, activity, "whiteStar.png");
         playButtonTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTypeTextureAtlas, activity, "playButton.png");
+        leftArrowTextureRegion= BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTypeTextureAtlas, activity, "leftArrow.png");
+        rightArrowTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTypeTextureAtlas, activity, "rightArrow.png");
 
         try {
             gameTypeTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(1, 1, 1));
@@ -561,4 +564,11 @@ public class ResourcesManager {
         throw new UnsupportedOperationException("Fish does not exist in JSON data");
     }
 
+    public ITextureRegion getLeftArrowTextureRegion() {
+        return leftArrowTextureRegion;
+    }
+
+    public ITextureRegion getRightArrowTextureRegion() {
+        return rightArrowTextureRegion;
+    }
 }

@@ -184,7 +184,7 @@ public class GameScene extends BaseScene implements IAccelerationListener {
         numberOfEeatenFishes = 0;
 
         numberOfEatenFishesTextStatic = new Text(80, 460, ResourcesManager.getInstance().getBlackFont(), "Eaten fishes:", vertexBufferObjectManager);
-        numberOfEatenFishesTextDynamic = new Text(150, 460, ResourcesManager.getInstance().getBlackFont(), "0123456789", vertexBufferObjectManager, DrawType.DYNAMIC);
+        numberOfEatenFishesTextDynamic = new Text(160, 460, ResourcesManager.getInstance().getBlackFont(), "0123456789", vertexBufferObjectManager, DrawType.DYNAMIC);
         numberOfEatenFishesTextDynamic.setText("0");
 
     }
@@ -242,7 +242,7 @@ public class GameScene extends BaseScene implements IAccelerationListener {
     }
 
     public void addOneEnemy() {
-        numberOfEeatenFishes++;
+        numberOfEeatenFishes+=1;
     }
 
     private void updateNumberOfEatenFishesText() {
