@@ -14,4 +14,16 @@ public class OptionsService extends BaseService {
     public boolean isFishLocked(FishType fishType){
         return databaseHelper.isFishLocked(fishType);
     }
+
+    public int getFishPower(FishType fishType){
+        return databaseHelper.getFishPower(fishType);
+    }
+
+    public int getFishValue(FishType fishType){
+        return databaseHelper.getFishValue(fishType);
+    }
+
+    public float getFishSpeed(FishType fishType){
+        return databaseHelper.getFishSpeed(fishType);
+    }
 }

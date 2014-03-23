@@ -134,4 +134,45 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         database.close();
         return result == 1;
     }
+
+    public float getFishSpeed(FishType fishType) {
+        Float result = null;
+        SQLiteDatabase database = getReadableDatabase();
+        Cursor cursor = database.rawQuery("SELECT " + COLUMN_FISH_SPEED+ " FROM " + TABLE_PLAYER_OPTIONS+ " WHERE " +
+                COLUMN_FISH_TYPE + " = ?",new String[]{fishType.name()});
+        while (cursor.moveToNext()) {
+            result = cursor.getFloat(0);
+        }
+        cursor.close();
+        database.close();
+        return result;
+    }
+
+    public int getFishPower(FishType fishType) {
+        Integer result = null;
+        SQLiteDatabase database = getReadableDatabase();
+        Cursor cursor = database.rawQuery("SELECT " + COLUMN_FISH_POWER+ " FROM " + TABLE_PLAYER_OPTIONS+ " WHERE " +
+                COLUMN_FISH_TYPE + " = ?",new String[]{fishType.name()});
+        while (cursor.moveToNext()) {
+            result = cursor.getInt(0);
+        }
+        cursor.close();
+        database.close();
+        return result;
+
+    }
+
+    public int getFishValue(FishType fishType) {
+        Integer result = null;
+        SQLiteDatabase database = getReadableDatabase();
+        Cursor cursor = database.rawQuery("SELECT " + COLUMN_FISH_VALUE+ " FROM " + TABLE_PLAYER_OPTIONS+ " WHERE " +
+                COLUMN_FISH_TYPE + " = ?",new String[]{fishType.name()});
+        while (cursor.moveToNext()) {
+            result = cursor.getInt(0);
+        }
+        cursor.close();
+        database.close();
+        return result;
+
+    }
 }

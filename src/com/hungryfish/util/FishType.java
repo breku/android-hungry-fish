@@ -5,7 +5,7 @@ package com.hungryfish.util;
  * Date: 24.01.14
  */
 public enum FishType {
-    BLACK(3, 3, 4.0f),
+    BLACK(4, 3, 4.0f),
     PURPLE(3, 2, 3.0f),
     RED(2, 2, 2.5f),
     YELLOW(1, 2, 2.0f),
