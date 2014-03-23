@@ -40,7 +40,7 @@ public class FishPool extends GenericPool<Fish> {
                     fishType, physicsWorld, true, fishBodyData, true, counter);
             fish.setCurrentTileIndex(1);
         } else {
-            fish = new Fish(random.nextInt(50) + ConstantsUtil.LEFT_BORDER - 200, random.nextInt(ConstantsUtil.TOP_BORDER - ConstantsUtil.BOTTOM_BORDER - 25) + 25,
+            fish = new Fish(random.nextInt(50) + ConstantsUtil.LEFT_BORDER - 200, random.nextInt(ConstantsUtil.TOP_BORDER - ConstantsUtil.BOTTOM_BORDER - 50) + 25,
                     fishType, physicsWorld, true, fishBodyData, false, counter);
             fish.setCurrentTileIndex(0);
         }
