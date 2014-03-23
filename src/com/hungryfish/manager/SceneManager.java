@@ -116,11 +116,13 @@ public class SceneManager {
         gameTypeScene = new GameTypeScene();
         setScene(gameTypeScene);
         ResourcesManager.getInstance().unloadMenuTextures();
+        menuScene.disposeScene();
     }
 
     public void loadGameScene(final FishType fishType) {
         setScene(loadingScene);
         ResourcesManager.getInstance().unloadGameTypeTextures();
+        gameTypeScene.disposeScene();
         ResourcesManager.getInstance().getEngine().registerUpdateHandler(new TimerHandler(ConstantsUtil.LOADING_SCENE_TIME, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {

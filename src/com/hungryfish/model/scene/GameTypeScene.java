@@ -4,6 +4,7 @@ package com.hungryfish.model.scene;
 import com.hungryfish.manager.ResourcesManager;
 import com.hungryfish.manager.SceneManager;
 import com.hungryfish.model.shape.Fish;
+import com.hungryfish.service.OptionsService;
 import com.hungryfish.util.ConstantsUtil;
 import com.hungryfish.util.FishType;
 import com.hungryfish.util.SceneType;
@@ -29,6 +30,9 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
 
     private List<Fish> fishSpriteList;
     private Integer currentFishSpriteIndex;
+    private OptionsService optionsService;
+
+    private Sprite lock;
 
 
     @Override
@@ -47,11 +51,16 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
             attachChild(fish);
         }
         fishSpriteList.get(currentFishSpriteIndex).setVisible(true);
+
+        lock = new Sprite(400,240,ResourcesManager.getInstance().getLockTextureRegion(),vertexBufferObjectManager);
+        lock.setVisible(false);
+        attachChild(lock);
     }
 
     private void init() {
         fishSpriteList = new ArrayList<Fish>();
         currentFishSpriteIndex = 0;
+        optionsService = new OptionsService();
     }
 
     private void createBackground() {
@@ -110,14 +119,25 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
                 break;
             case RIGHT_BUTTON:
                 changeFishRight();
+                updateLock();
                 break;
             case LEFT_BUTTON:
                 changeFishLeft();
+                updateLock();
                 break;
             default:
                 return false;
         }
         return false;
+    }
+
+    private void updateLock() {
+        Fish fish = fishSpriteList.get(currentFishSpriteIndex);
+        if(optionsService.isFishLocked(fish.getFishType())){
+            lock.setVisible(true);
+        }else {
+            lock.setVisible(false);
+        }
     }
 
     private void changeFishLeft() {

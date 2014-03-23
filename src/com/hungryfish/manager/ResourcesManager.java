@@ -78,7 +78,7 @@ public class ResourcesManager {
 
     // Game Type
     private ITextureRegion backgroundGameTypeTextureRegion, starGoldTextureRegion, starWhiteTextureRegion,
-            playButtonTextureRegion, leftArrowTextureRegion, rightArrowTextureRegion;
+            playButtonTextureRegion, leftArrowTextureRegion, rightArrowTextureRegion, lockTextureRegion ;
 
 
     private List<Sound> winSoundList, loseSoundList, halfWinSoundList;
@@ -154,6 +154,7 @@ public class ResourcesManager {
 
         starGoldTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTypeTextureAtlas, activity, "goldStar.png");
         starWhiteTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTypeTextureAtlas, activity, "whiteStar.png");
+        lockTextureRegion= BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTypeTextureAtlas, activity, "lock.png");
         playButtonTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTypeTextureAtlas, activity, "playButton.png");
         leftArrowTextureRegion= BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTypeTextureAtlas, activity, "leftArrow.png");
         rightArrowTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTypeTextureAtlas, activity, "rightArrow.png");
@@ -570,5 +571,9 @@ public class ResourcesManager {
 
     public ITextureRegion getRightArrowTextureRegion() {
         return rightArrowTextureRegion;
+    }
+
+    public ITextureRegion getLockTextureRegion() {
+        return lockTextureRegion;
     }
 }

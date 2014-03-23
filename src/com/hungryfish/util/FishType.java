@@ -5,19 +5,24 @@ package com.hungryfish.util;
  * Date: 24.01.14
  */
 public enum FishType {
-    BLACK(6.0f),
-    PURPLE(5.0f),
-    RED(4.0f),
-    YELLOW(3.0f),
-    ORANGE(2.0f),
-    GREEN(1.0f);
+    BLACK(3, 3, 4.0f),
+    PURPLE(3, 2, 3.0f),
+    RED(2, 2, 2.5f),
+    YELLOW(1, 2, 2.0f),
+    ORANGE(2, 1, 1.5f),
+    GREEN(1, 1, 1.0f);
 
 
+    private Integer fishValue;
+    private Integer fishPower;
     private float fishSpeed;
 
-    private FishType(float fishSpeed) {
+    private FishType(Integer fishValue, Integer fishPower, float fishSpeed) {
+        this.fishValue = fishValue;
+        this.fishPower = fishPower;
         this.fishSpeed = fishSpeed;
     }
+
 
     public float getFishSpeed() {
         return fishSpeed;
@@ -25,5 +30,13 @@ public enum FishType {
 
     public FishType next() {
         return values()[(ordinal() + 1) % values().length];
+    }
+
+    public Integer getFishPower() {
+        return fishPower;
+    }
+
+    public Integer getFishValue() {
+        return fishValue;
     }
 }
