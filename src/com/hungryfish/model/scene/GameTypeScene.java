@@ -92,8 +92,7 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
     private void updatePropertyLines(){
         FishType fishType = fishSpriteList.get(currentFishSpriteIndex).getFishType();
         for (Line line : lineList) {
-            detachChild(line);
-            line = null;
+            line.setVisible(false);
         }
         lineList.clear();
 
@@ -181,9 +180,9 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
     @Override
     public void disposeScene() {
         for (Sprite sprite : fishSpriteList) {
-            detachChild(sprite);
-            sprite = null;
+            sprite.setVisible(false);
         }
+        fishSpriteList.clear();
     }
 
     @Override
@@ -216,8 +215,7 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
         float valueRectangleWidth = WHITE_RECTANGLE_WIDTH * optionsService.getFishValue(fishType) / MAX_FISH_VALUE;
 
         for (Rectangle rectangle : fishPropertiesRectangleList) {
-            detachChild(rectangle);
-            rectangle = null;
+            rectangle.setVisible(false);
         }
 
         fishPropertiesRectangleList.clear();
