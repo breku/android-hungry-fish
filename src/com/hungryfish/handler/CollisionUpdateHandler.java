@@ -38,13 +38,16 @@ public class CollisionUpdateHandler implements IUpdateHandler {
                 if (userData.isToRemove()) {
 
                     Fish fish = (Fish) gameScene.getChildByTag(userData.getSpriteTag());
-                    fish.detachSelf();
-                    fish.dispose();
-                    physicsWorld.destroyBody(body);
+
 
                     if (userData.isKilled()) {
                         gameScene.addOneEnemy();
+                        gameScene.addPoints(fish.getFishType());
                     }
+
+                    fish.detachSelf();
+                    fish.dispose();
+                    physicsWorld.destroyBody(body);
                 }
 
             }

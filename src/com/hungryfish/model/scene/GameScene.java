@@ -59,8 +59,15 @@ public class GameScene extends BaseScene implements IAccelerationListener {
     private IUpdateHandler fishNumberUpdateHandler;
 
     private Text numberOfEatenFishesTextStatic;
+    private Text pointsTextStatic;
+    private Text pointsTextDynamic;
+
+    private Text canEatText;
     private Text numberOfEatenFishesTextDynamic;
     private Integer numberOfEeatenFishes;
+    private Integer points;
+
+    private List<Fish> possibleFishToEat;
 
 
     // objects[0] - FishType
@@ -180,13 +187,26 @@ public class GameScene extends BaseScene implements IAccelerationListener {
         fishPool = new FishPool(physicsWorld);
         fishPool.batchAllocatePoolItems(ConstantsUtil.POOL_SIZE);
 
-        firstTimeCounter = 0;
+        possibleFishToEat = new ArrayList<Fish>();
 
+        for (int i = 0; i < FishType.values().length; i++) {
+            Fish fish = new Fish(500 + i * 50, 460, FishType.values()[i]);
+            fish.setScale(0.5f);
+            possibleFishToEat.add(fish);
+        }
+
+        firstTimeCounter = 0;
         numberOfEeatenFishes = 0;
+        points =0;
 
         numberOfEatenFishesTextStatic = new Text(80, 460, ResourcesManager.getInstance().getBlackFont(), "Eaten fishes:", vertexBufferObjectManager);
         numberOfEatenFishesTextDynamic = new Text(160, 460, ResourcesManager.getInstance().getBlackFont(), "0123456789", vertexBufferObjectManager, DrawType.DYNAMIC);
+        pointsTextStatic = new Text(220, 460, ResourcesManager.getInstance().getBlackFont(), "Points:", vertexBufferObjectManager);
+        pointsTextDynamic = new Text(300, 460, ResourcesManager.getInstance().getBlackFont(), "0123456789", vertexBufferObjectManager);
+        canEatText = new Text(400, 460, ResourcesManager.getInstance().getBlackFont(), "You can eat:", vertexBufferObjectManager);
+
         numberOfEatenFishesTextDynamic.setText("0");
+        pointsTextDynamic.setText("0");
 
     }
 
@@ -196,8 +216,20 @@ public class GameScene extends BaseScene implements IAccelerationListener {
         Rectangle gameHudRectangle = new Rectangle(400, 460, 800, 40, vertexBufferObjectManager);
         gameHudRectangle.setColor(Color.WHITE);
         gameHUD.attachChild(gameHudRectangle);
+
+        // Number of eaten fishes
         gameHUD.attachChild(numberOfEatenFishesTextStatic);
         gameHUD.attachChild(numberOfEatenFishesTextDynamic);
+
+        // Points
+        gameHUD.attachChild(pointsTextStatic);
+        gameHUD.attachChild(pointsTextDynamic);
+
+        // Fishes that you can eat
+        gameHUD.attachChild(canEatText);
+        for (Fish fish : possibleFishToEat) {
+            gameHUD.attachChild(fish);
+        }
         camera.setHUD(gameHUD);
         camera.setChaseEntity(player);
         ((BoundCamera) camera).setBounds(0, 0, ConstantsUtil.SCREEN_WIDTH * 2, ConstantsUtil.SCREEN_HEIGHT * 2);
@@ -236,14 +268,25 @@ public class GameScene extends BaseScene implements IAccelerationListener {
         }
 
         updateNumberOfEatenFishesText();
+        updatePoints();
 
 
         player.updatePosition(accelerationData);
 
     }
 
+    private void updatePoints() {
+        if (Integer.valueOf(pointsTextDynamic.getText().toString()) != points) {
+            pointsTextDynamic.setText(String.valueOf(points));
+        }
+    }
+
     public void addOneEnemy() {
         numberOfEeatenFishes+=1;
+    }
+
+    public void addPoints(FishType fishType){
+        points = points + fishType.getFishLevel();
     }
 
     private void updateNumberOfEatenFishesText() {
