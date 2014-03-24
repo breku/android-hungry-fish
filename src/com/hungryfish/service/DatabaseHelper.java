@@ -26,7 +26,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_MAIN_OPTIONS = "MAIN_OPTIONS_TABLE";
     private static final String COLUMN_OPTION_SOUND = "OPTION_SOUND";
     private static final String COLUMN_OPTION_MONEY = "OPTION_MONEY";
-    private static final String COLUMN_RECORD = "RECORD";
 
 
     // Highscores Table
@@ -41,7 +40,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_FISH_VALUE = "FISH_VALUE";
     private static final String COLUMN_FISH_LOCKED = "FISH_LOCKED";
 
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
 
     public DatabaseHelper(Context context) {
@@ -58,8 +57,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_MAIN_OPTIONS + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_OPTION_SOUND + " INTEGER, " +
-                COLUMN_OPTION_MONEY + " INTEGER, " +
-                COLUMN_RECORD + " INTEGER" +
+                COLUMN_OPTION_MONEY + " INTEGER" +
                 ")");
 
         sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_PLAYER_OPTIONS + " (" +
@@ -128,7 +126,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         contentValues.put(COLUMN_OPTION_MONEY, 0);
         contentValues.put(COLUMN_OPTION_SOUND, 1);
-        contentValues.put(COLUMN_RECORD, 0);
 
         sqLiteDatabase.insert(TABLE_MAIN_OPTIONS, null, contentValues);
 
@@ -223,5 +220,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Collections.sort(result, Collections.reverseOrder());
 
         return result.subList(0, 5);
+    }
+
+    public void updateMoney(Integer points) {
+        SQLiteDatabase database = getWritableDatabase();
+        database.execSQL("UPDATE " + TABLE_MAIN_OPTIONS + "  SET " + COLUMN_OPTION_MONEY + " = " + COLUMN_OPTION_MONEY + " + ?", new String[]{String.valueOf(points)});
+        database.close();
+    }
+
+
+    public Integer getMoney() {
+        Integer result = null;
+        SQLiteDatabase database = getReadableDatabase();
+        Cursor cursor = database.rawQuery("SELECT " + COLUMN_OPTION_MONEY + " FROM " + TABLE_MAIN_OPTIONS, new String[]{});
+        while (cursor.moveToNext()) {
+            result = cursor.getInt(0);
+        }
+        cursor.close();
+        database.close();
+        return result;
     }
 }

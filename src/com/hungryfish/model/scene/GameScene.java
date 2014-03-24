@@ -15,6 +15,7 @@ import com.hungryfish.model.shape.Fish;
 import com.hungryfish.model.shape.FishBodyData;
 import com.hungryfish.pool.FishPool;
 import com.hungryfish.service.HighScoreService;
+import com.hungryfish.service.OptionsService;
 import com.hungryfish.util.ConstantsUtil;
 import com.hungryfish.util.FishType;
 import com.hungryfish.util.SceneType;
@@ -75,7 +76,8 @@ public class GameScene extends BaseScene implements IAccelerationListener {
     private List<Fish> possibleFishToEat;
     private boolean endGame;
 
-    HighScoreService highScoreService;
+    private HighScoreService highScoreService;
+    private OptionsService optionsService;
 
 
     // objects[0] - FishType
@@ -196,6 +198,7 @@ public class GameScene extends BaseScene implements IAccelerationListener {
         fishPool.batchAllocatePoolItems(ConstantsUtil.POOL_SIZE);
 
         highScoreService = new HighScoreService();
+        optionsService = new OptionsService();
         possibleFishToEat = new ArrayList<Fish>();
 
         for (int i = 0; i < FishType.values().length; i++) {
@@ -299,6 +302,7 @@ public class GameScene extends BaseScene implements IAccelerationListener {
     private void checkForEndGame() {
         if (endGame) {
             highScoreService.addScore(points);
+            optionsService.updateMoney(points * player.getFishType().getFishValue());
             SceneManager.getInstance().loadEndGameScene(points);
         }
     }

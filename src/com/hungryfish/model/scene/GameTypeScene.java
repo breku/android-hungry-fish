@@ -54,6 +54,13 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
         createButtons();
         createFishGraphics();
         createFishProperties();
+        createMoneyCaptions();
+    }
+
+    private void createMoneyCaptions() {
+        String money = "Money: " + optionsService.getMoney();
+        Text moneyText = new Text(400, 440, ResourcesManager.getInstance().getBlackFont(), money, vertexBufferObjectManager);
+        attachChild(moneyText);
     }
 
     private void createFishProperties() {
@@ -75,9 +82,9 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
         float powerRectangleWidth = WHITE_RECTANGLE_WIDTH * optionsService.getFishPower(fishType) / MAX_FISH_POWER;
         float valueRectangleWidth = WHITE_RECTANGLE_WIDTH * optionsService.getFishValue(fishType) / MAX_FISH_VALUE;
 
-        fishPropertiesRectangleList.add(new Rectangle(500-((WHITE_RECTANGLE_WIDTH -speedRectangleWidth)/2), 200, speedRectangleWidth, 10, vertexBufferObjectManager));
-        fishPropertiesRectangleList.add(new Rectangle(500-((WHITE_RECTANGLE_WIDTH -powerRectangleWidth)/2), 170, powerRectangleWidth, 10, vertexBufferObjectManager));
-        fishPropertiesRectangleList.add(new Rectangle(500-((WHITE_RECTANGLE_WIDTH -valueRectangleWidth)/2), 140, valueRectangleWidth, 10, vertexBufferObjectManager));
+        fishPropertiesRectangleList.add(new Rectangle(500 - ((WHITE_RECTANGLE_WIDTH - speedRectangleWidth) / 2), 200, speedRectangleWidth, 10, vertexBufferObjectManager));
+        fishPropertiesRectangleList.add(new Rectangle(500 - ((WHITE_RECTANGLE_WIDTH - powerRectangleWidth) / 2), 170, powerRectangleWidth, 10, vertexBufferObjectManager));
+        fishPropertiesRectangleList.add(new Rectangle(500 - ((WHITE_RECTANGLE_WIDTH - valueRectangleWidth) / 2), 140, valueRectangleWidth, 10, vertexBufferObjectManager));
 
         for (Rectangle rectangle : fishPropertiesRectangleList) {
             rectangle.setColor(Color.GREEN);
@@ -85,27 +92,27 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
         }
 
 
-         updatePropertyLines();
+        updatePropertyLines();
     }
 
 
-    private void updatePropertyLines(){
+    private void updatePropertyLines() {
         FishType fishType = fishSpriteList.get(currentFishSpriteIndex).getFishType();
         for (Line line : lineList) {
             line.setVisible(false);
         }
         lineList.clear();
 
-        float a = 500 - WHITE_RECTANGLE_WIDTH/2 + WHITE_RECTANGLE_WIDTH * fishType.getFishSpeed() * 2 / MAX_FISH_SPEED;
-        lineList.add(new Line(a,195,a,205,vertexBufferObjectManager));
+        float a = 500 - WHITE_RECTANGLE_WIDTH / 2 + WHITE_RECTANGLE_WIDTH * fishType.getFishSpeed() * 2 / MAX_FISH_SPEED;
+        lineList.add(new Line(a, 195, a, 205, vertexBufferObjectManager));
 
 
-        float b = 500 - WHITE_RECTANGLE_WIDTH/2 + WHITE_RECTANGLE_WIDTH * fishType.getFishPower() * 2 / MAX_FISH_POWER;
-        lineList.add(new Line(b,165,b,175,vertexBufferObjectManager));
+        float b = 500 - WHITE_RECTANGLE_WIDTH / 2 + WHITE_RECTANGLE_WIDTH * fishType.getFishPower() * 2 / MAX_FISH_POWER;
+        lineList.add(new Line(b, 165, b, 175, vertexBufferObjectManager));
 
 
-        float c = 500 - WHITE_RECTANGLE_WIDTH/2 + WHITE_RECTANGLE_WIDTH * fishType.getFishValue() * 2 / MAX_FISH_VALUE;
-        lineList.add(new Line(c,135,c,145,vertexBufferObjectManager));
+        float c = 500 - WHITE_RECTANGLE_WIDTH / 2 + WHITE_RECTANGLE_WIDTH * fishType.getFishValue() * 2 / MAX_FISH_VALUE;
+        lineList.add(new Line(c, 135, c, 145, vertexBufferObjectManager));
 
 
         for (Line line : lineList) {
@@ -220,9 +227,9 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
 
         fishPropertiesRectangleList.clear();
 
-        fishPropertiesRectangleList.add(new Rectangle(500-((WHITE_RECTANGLE_WIDTH -speedRectangleWidth)/2), 200, speedRectangleWidth, 10, vertexBufferObjectManager));
-        fishPropertiesRectangleList.add(new Rectangle(500-((WHITE_RECTANGLE_WIDTH -powerRectangleWidth)/2), 170, powerRectangleWidth, 10, vertexBufferObjectManager));
-        fishPropertiesRectangleList.add(new Rectangle(500-((WHITE_RECTANGLE_WIDTH -valueRectangleWidth)/2), 140, valueRectangleWidth, 10, vertexBufferObjectManager));
+        fishPropertiesRectangleList.add(new Rectangle(500 - ((WHITE_RECTANGLE_WIDTH - speedRectangleWidth) / 2), 200, speedRectangleWidth, 10, vertexBufferObjectManager));
+        fishPropertiesRectangleList.add(new Rectangle(500 - ((WHITE_RECTANGLE_WIDTH - powerRectangleWidth) / 2), 170, powerRectangleWidth, 10, vertexBufferObjectManager));
+        fishPropertiesRectangleList.add(new Rectangle(500 - ((WHITE_RECTANGLE_WIDTH - valueRectangleWidth) / 2), 140, valueRectangleWidth, 10, vertexBufferObjectManager));
 
         for (Rectangle rectangle : fishPropertiesRectangleList) {
             rectangle.setColor(Color.GREEN);
