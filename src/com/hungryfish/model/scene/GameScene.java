@@ -20,6 +20,8 @@ import com.hungryfish.util.SceneType;
 import org.andengine.engine.camera.BoundCamera;
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.engine.handler.IUpdateHandler;
+import org.andengine.engine.handler.timer.ITimerCallback;
+import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.entity.IEntity;
 import org.andengine.entity.primitive.Line;
 import org.andengine.entity.primitive.Rectangle;
@@ -61,13 +63,16 @@ public class GameScene extends BaseScene implements IAccelerationListener {
     private Text numberOfEatenFishesTextStatic;
     private Text pointsTextStatic;
     private Text pointsTextDynamic;
-
     private Text canEatText;
     private Text numberOfEatenFishesTextDynamic;
+    private Text timerTextStatic;
+    private Text timerTextDynamic;
+
     private Integer numberOfEeatenFishes;
     private Integer points;
 
     private List<Fish> possibleFishToEat;
+    private boolean endGame;
 
 
     // objects[0] - FishType
@@ -190,7 +195,7 @@ public class GameScene extends BaseScene implements IAccelerationListener {
         possibleFishToEat = new ArrayList<Fish>();
 
         for (int i = 0; i < FishType.values().length; i++) {
-            Fish fish = new Fish(500 + i * 50, 460, FishType.values()[i]);
+            Fish fish = new Fish(520 + i * 50, 460, FishType.values()[i]);
             fish.setScale(0.5f);
             possibleFishToEat.add(fish);
         }
@@ -199,13 +204,18 @@ public class GameScene extends BaseScene implements IAccelerationListener {
         numberOfEeatenFishes = 0;
         points =0;
 
-        numberOfEatenFishesTextStatic = new Text(80, 460, ResourcesManager.getInstance().getBlackFont(), "Eaten fishes:", vertexBufferObjectManager);
-        numberOfEatenFishesTextDynamic = new Text(160, 460, ResourcesManager.getInstance().getBlackFont(), "0123456789", vertexBufferObjectManager, DrawType.DYNAMIC);
-        pointsTextStatic = new Text(220, 460, ResourcesManager.getInstance().getBlackFont(), "Points:", vertexBufferObjectManager);
-        pointsTextDynamic = new Text(300, 460, ResourcesManager.getInstance().getBlackFont(), "0123456789", vertexBufferObjectManager);
-        canEatText = new Text(400, 460, ResourcesManager.getInstance().getBlackFont(), "You can eat:", vertexBufferObjectManager);
+        endGame = false;
+
+        timerTextStatic= new Text(30, 460, ResourcesManager.getInstance().getBlackFont(), "Time:", vertexBufferObjectManager);
+        timerTextDynamic= new Text(80, 460, ResourcesManager.getInstance().getBlackFont(), "0123456789", vertexBufferObjectManager);
+        numberOfEatenFishesTextStatic = new Text(160, 460, ResourcesManager.getInstance().getBlackFont(), "Eaten fishes:", vertexBufferObjectManager);
+        numberOfEatenFishesTextDynamic = new Text(240, 460, ResourcesManager.getInstance().getBlackFont(), "0123456789", vertexBufferObjectManager, DrawType.DYNAMIC);
+        pointsTextStatic = new Text(300, 460, ResourcesManager.getInstance().getBlackFont(), "Points:", vertexBufferObjectManager);
+        pointsTextDynamic = new Text(350, 460, ResourcesManager.getInstance().getBlackFont(), "0123456789", vertexBufferObjectManager);
+        canEatText = new Text(440, 460, ResourcesManager.getInstance().getBlackFont(), "You can eat:", vertexBufferObjectManager);
 
         numberOfEatenFishesTextDynamic.setText("0");
+        timerTextDynamic.setText(String.valueOf(ConstantsUtil.GAME_TIME));
         pointsTextDynamic.setText("0");
 
     }
@@ -216,6 +226,10 @@ public class GameScene extends BaseScene implements IAccelerationListener {
         Rectangle gameHudRectangle = new Rectangle(400, 460, 800, 40, vertexBufferObjectManager);
         gameHudRectangle.setColor(Color.WHITE);
         gameHUD.attachChild(gameHudRectangle);
+
+        // Timer
+        gameHUD.attachChild(timerTextStatic);
+        gameHUD.attachChild(timerTextDynamic);
 
         // Number of eaten fishes
         gameHUD.attachChild(numberOfEatenFishesTextStatic);
@@ -260,19 +274,43 @@ public class GameScene extends BaseScene implements IAccelerationListener {
         super.onManagedUpdate(pSecondsElapsed);
         if (firstTimeCounter++ == 1) {
             resourcesManager.getStartGameSound().play();
-
+            timerTextDynamic.setText(String.valueOf(ConstantsUtil.GAME_TIME));
             List<Fish> enemyFishes = getAllEnemyFishes();
             for (Fish enemyFish : enemyFishes) {
                 enemyFish.swim();
             }
+            updateTime();
         }
 
         updateNumberOfEatenFishesText();
         updatePoints();
 
+        checkForEndGame();
+
 
         player.updatePosition(accelerationData);
 
+    }
+
+    private void checkForEndGame() {
+        if(endGame){
+            SceneManager.getInstance().loadEndGameScene(points);
+        }
+    }
+
+    private void updateTime() {
+        registerUpdateHandler(new TimerHandler(1.0f,true,new ITimerCallback() {
+            @Override
+            public void onTimePassed(TimerHandler pTimerHandler) {
+                Integer prevTime = Integer.valueOf(timerTextDynamic.getText().toString());
+                if(prevTime == 1){
+                    endGame = true;
+                }
+                String nextTime = String.valueOf(--prevTime);
+                timerTextDynamic.setText(nextTime);
+
+            }
+        }));
     }
 
     private void updatePoints() {

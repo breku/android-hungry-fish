@@ -45,4 +45,17 @@ public class ConstantsUtil implements Constants, LevelConstants {
     public static final short MASK_BITS_ENEMY = CATEGORY_BIT_PLAYER;
     public static final short MASK_BITS_WALL = CATEGORY_BIT_PLAYER;
 
+
+    /* 20 seconds for play */
+    public static final int GAME_TIME = 20;
+
+
+    /* Number of fishes you have to eat before unlocking the the next */
+    public static final int UNLOCK_LEVEL_1 = 10;
+    public static final int UNLOCK_LEVEL_2 = 30;
+    public static final int UNLOCK_LEVEL_3 = 60;
+    public static final int UNLOCK_LEVEL_4 = 100;
+    public static final int UNLOCK_LEVEL_5 = 200;
+
+
 }
