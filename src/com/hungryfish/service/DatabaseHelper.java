@@ -7,6 +7,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import com.hungryfish.util.FishType;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * User: Breku
  * Date: 07.10.13
@@ -25,6 +29,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_RECORD = "RECORD";
 
 
+    // Highscores Table
+    private static final String TABLE_HIGHSCORES = "HIGHSCORES_TABLE";
+    private static final String COLUMN_SCORE = "SCORE";
+
     // Player options table
     private static final String TABLE_PLAYER_OPTIONS = "PLAYER_OPTIONS_TABLE";
     private static final String COLUMN_FISH_TYPE = "FISH_TYPE";
@@ -33,7 +41,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_FISH_VALUE = "FISH_VALUE";
     private static final String COLUMN_FISH_LOCKED = "FISH_LOCKED";
 
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 4;
 
 
     public DatabaseHelper(Context context) {
@@ -50,18 +58,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_MAIN_OPTIONS + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_OPTION_SOUND + " INTEGER, " +
-                COLUMN_OPTION_MONEY + " INTEGER, "+
-                COLUMN_RECORD + " INTEGER"+
+                COLUMN_OPTION_MONEY + " INTEGER, " +
+                COLUMN_RECORD + " INTEGER" +
                 ")");
 
         sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_PLAYER_OPTIONS + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_FISH_TYPE + " TEXT, " +
-                COLUMN_FISH_POWER + " INTEGER, "+
-                COLUMN_FISH_SPEED + " FLOAT, "+
-                COLUMN_FISH_VALUE  + " INTEGER, "+
-                COLUMN_FISH_LOCKED  + " INTEGER"+
+                COLUMN_FISH_POWER + " INTEGER, " +
+                COLUMN_FISH_SPEED + " FLOAT, " +
+                COLUMN_FISH_VALUE + " INTEGER, " +
+                COLUMN_FISH_LOCKED + " INTEGER" +
                 ")");
+
+        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_HIGHSCORES + " (" +
+                COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COLUMN_SCORE + " INTEGER" +
+                ")");
+
 
         createDefaultDBValues(sqLiteDatabase);
     }
@@ -78,6 +92,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_MAIN_OPTIONS);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_PLAYER_OPTIONS);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_HIGHSCORES);
         onCreate(sqLiteDatabase);
     }
 
@@ -87,15 +102,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Main options table
         createDefaultMainOptions(sqLiteDatabase);
 
+        createDefaultHighScores(sqLiteDatabase);
 
         // Player options table
         for (FishType fishType : FishType.values()) {
-            if(fishType.ordinal() == 0){
-                createDefaultFishRecord(sqLiteDatabase,fishType,0);
-            }else {
-                createDefaultFishRecord(sqLiteDatabase,fishType,1);
+            if (fishType.ordinal() == 0) {
+                createDefaultFishRecord(sqLiteDatabase, fishType, 0);
+            } else {
+                createDefaultFishRecord(sqLiteDatabase, fishType, 1);
             }
         }
+    }
+
+    private void createDefaultHighScores(SQLiteDatabase sqLiteDatabase) {
+        for (int i = 0; i < 5; i++) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(COLUMN_SCORE, 0);
+            sqLiteDatabase.insert(TABLE_HIGHSCORES, null, contentValues);
+        }
+
     }
 
     private void createDefaultMainOptions(SQLiteDatabase sqLiteDatabase) {
@@ -125,8 +150,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public boolean isFishLocked(FishType fishType) {
         Integer result = null;
         SQLiteDatabase database = getReadableDatabase();
-        Cursor cursor = database.rawQuery("SELECT " + COLUMN_FISH_LOCKED+ " FROM " + TABLE_PLAYER_OPTIONS+ " WHERE " +
-                COLUMN_FISH_TYPE + " = ?",new String[]{fishType.name()});
+        Cursor cursor = database.rawQuery("SELECT " + COLUMN_FISH_LOCKED + " FROM " + TABLE_PLAYER_OPTIONS + " WHERE " +
+                COLUMN_FISH_TYPE + " = ?", new String[]{fishType.name()});
         while (cursor.moveToNext()) {
             result = cursor.getInt(0);
         }
@@ -138,8 +163,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public float getFishSpeed(FishType fishType) {
         Float result = null;
         SQLiteDatabase database = getReadableDatabase();
-        Cursor cursor = database.rawQuery("SELECT " + COLUMN_FISH_SPEED+ " FROM " + TABLE_PLAYER_OPTIONS+ " WHERE " +
-                COLUMN_FISH_TYPE + " = ?",new String[]{fishType.name()});
+        Cursor cursor = database.rawQuery("SELECT " + COLUMN_FISH_SPEED + " FROM " + TABLE_PLAYER_OPTIONS + " WHERE " +
+                COLUMN_FISH_TYPE + " = ?", new String[]{fishType.name()});
         while (cursor.moveToNext()) {
             result = cursor.getFloat(0);
         }
@@ -151,8 +176,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public int getFishPower(FishType fishType) {
         Integer result = null;
         SQLiteDatabase database = getReadableDatabase();
-        Cursor cursor = database.rawQuery("SELECT " + COLUMN_FISH_POWER+ " FROM " + TABLE_PLAYER_OPTIONS+ " WHERE " +
-                COLUMN_FISH_TYPE + " = ?",new String[]{fishType.name()});
+        Cursor cursor = database.rawQuery("SELECT " + COLUMN_FISH_POWER + " FROM " + TABLE_PLAYER_OPTIONS + " WHERE " +
+                COLUMN_FISH_TYPE + " = ?", new String[]{fishType.name()});
         while (cursor.moveToNext()) {
             result = cursor.getInt(0);
         }
@@ -165,8 +190,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public int getFishValue(FishType fishType) {
         Integer result = null;
         SQLiteDatabase database = getReadableDatabase();
-        Cursor cursor = database.rawQuery("SELECT " + COLUMN_FISH_VALUE+ " FROM " + TABLE_PLAYER_OPTIONS+ " WHERE " +
-                COLUMN_FISH_TYPE + " = ?",new String[]{fishType.name()});
+        Cursor cursor = database.rawQuery("SELECT " + COLUMN_FISH_VALUE + " FROM " + TABLE_PLAYER_OPTIONS + " WHERE " +
+                COLUMN_FISH_TYPE + " = ?", new String[]{fishType.name()});
         while (cursor.moveToNext()) {
             result = cursor.getInt(0);
         }
@@ -174,5 +199,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         database.close();
         return result;
 
+    }
+
+    public void addScore(Integer score) {
+        SQLiteDatabase database = getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COLUMN_SCORE, score);
+        database.insert(TABLE_HIGHSCORES, null, contentValues);
+
+        database.close();
+    }
+
+    public List<Integer> getHighScores() {
+        List<Integer> result = new ArrayList<Integer>();
+        SQLiteDatabase database = getReadableDatabase();
+        Cursor cursor = database.rawQuery("SELECT " + COLUMN_SCORE + " FROM " + TABLE_HIGHSCORES, new String[]{});
+        while (cursor.moveToNext()) {
+            result.add(cursor.getInt(0));
+        }
+        cursor.close();
+        database.close();
+        Collections.sort(result, Collections.reverseOrder());
+
+        return result.subList(0, 5);
     }
 }

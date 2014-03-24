@@ -1,12 +1,17 @@
 package com.hungryfish.model.scene;
 
+import com.hungryfish.manager.ResourcesManager;
 import com.hungryfish.manager.SceneManager;
+import com.hungryfish.service.HighScoreService;
 import com.hungryfish.util.SceneType;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.Background;
+import org.andengine.entity.text.Text;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.util.adt.color.Color;
+
+import java.util.List;
 
 /**
  * User: Breku
@@ -14,13 +19,8 @@ import org.andengine.util.adt.color.Color;
  */
 public class HighScoreScene extends BaseScene implements IOnSceneTouchListener {
 
-    /**
-     * Constructor
-     *
-     * @param objects object[0] - Integer score
-     *                object[1] - LevelDifficulty levelDifficulty
-     *                object[2] - MathParameter mathParameter
-     */
+    private HighScoreService highScoreService;
+
     public HighScoreScene(Object... objects) {
         super(objects);
     }
@@ -29,10 +29,22 @@ public class HighScoreScene extends BaseScene implements IOnSceneTouchListener {
     public void createScene(Object... objects) {
         init();
         setBackground(new Background(Color.WHITE));
+        createHighScores();
         setOnSceneTouchListener(this);
     }
 
+    private void createHighScores() {
+        List<Integer> highScoreList = highScoreService.getHighScores();
+
+        for (int i = 0; i < highScoreList.size(); i++) {
+            Text text = new Text(400, 400 - i * 50, ResourcesManager.getInstance().getBlackFont(), highScoreList.get(i).toString(), vertexBufferObjectManager);
+            attachChild(text);
+        }
+
+    }
+
     private void init() {
+        highScoreService = new HighScoreService();
     }
 
 

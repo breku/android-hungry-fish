@@ -47,7 +47,7 @@ public class ConstantsUtil implements Constants, LevelConstants {
 
 
     /* 20 seconds for play */
-    public static final int GAME_TIME = 20;
+    public static final int GAME_TIME = 5;
 
 
     /* Number of fishes you have to eat before unlocking the the next */

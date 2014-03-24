@@ -14,6 +14,7 @@ import com.hungryfish.matcher.ClassTouchAreaMacher;
 import com.hungryfish.model.shape.Fish;
 import com.hungryfish.model.shape.FishBodyData;
 import com.hungryfish.pool.FishPool;
+import com.hungryfish.service.HighScoreService;
 import com.hungryfish.util.ConstantsUtil;
 import com.hungryfish.util.FishType;
 import com.hungryfish.util.SceneType;
@@ -73,6 +74,8 @@ public class GameScene extends BaseScene implements IAccelerationListener {
 
     private List<Fish> possibleFishToEat;
     private boolean endGame;
+
+    HighScoreService highScoreService;
 
 
     // objects[0] - FishType
@@ -192,6 +195,7 @@ public class GameScene extends BaseScene implements IAccelerationListener {
         fishPool = new FishPool(physicsWorld);
         fishPool.batchAllocatePoolItems(ConstantsUtil.POOL_SIZE);
 
+        highScoreService = new HighScoreService();
         possibleFishToEat = new ArrayList<Fish>();
 
         for (int i = 0; i < FishType.values().length; i++) {
@@ -202,12 +206,12 @@ public class GameScene extends BaseScene implements IAccelerationListener {
 
         firstTimeCounter = 0;
         numberOfEeatenFishes = 0;
-        points =0;
+        points = 0;
 
         endGame = false;
 
-        timerTextStatic= new Text(30, 460, ResourcesManager.getInstance().getBlackFont(), "Time:", vertexBufferObjectManager);
-        timerTextDynamic= new Text(80, 460, ResourcesManager.getInstance().getBlackFont(), "0123456789", vertexBufferObjectManager);
+        timerTextStatic = new Text(30, 460, ResourcesManager.getInstance().getBlackFont(), "Time:", vertexBufferObjectManager);
+        timerTextDynamic = new Text(80, 460, ResourcesManager.getInstance().getBlackFont(), "0123456789", vertexBufferObjectManager);
         numberOfEatenFishesTextStatic = new Text(160, 460, ResourcesManager.getInstance().getBlackFont(), "Eaten fishes:", vertexBufferObjectManager);
         numberOfEatenFishesTextDynamic = new Text(240, 460, ResourcesManager.getInstance().getBlackFont(), "0123456789", vertexBufferObjectManager, DrawType.DYNAMIC);
         pointsTextStatic = new Text(300, 460, ResourcesManager.getInstance().getBlackFont(), "Points:", vertexBufferObjectManager);
@@ -293,17 +297,18 @@ public class GameScene extends BaseScene implements IAccelerationListener {
     }
 
     private void checkForEndGame() {
-        if(endGame){
+        if (endGame) {
+            highScoreService.addScore(points);
             SceneManager.getInstance().loadEndGameScene(points);
         }
     }
 
     private void updateTime() {
-        registerUpdateHandler(new TimerHandler(1.0f,true,new ITimerCallback() {
+        registerUpdateHandler(new TimerHandler(1.0f, true, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
                 Integer prevTime = Integer.valueOf(timerTextDynamic.getText().toString());
-                if(prevTime == 1){
+                if (prevTime == 1) {
                     endGame = true;
                 }
                 String nextTime = String.valueOf(--prevTime);
@@ -320,10 +325,10 @@ public class GameScene extends BaseScene implements IAccelerationListener {
     }
 
     public void addOneEnemy() {
-        numberOfEeatenFishes+=1;
+        numberOfEeatenFishes += 1;
     }
 
-    public void addPoints(FishType fishType){
+    public void addPoints(FishType fishType) {
         points = points + fishType.getFishLevel();
     }
 
