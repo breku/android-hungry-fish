@@ -24,7 +24,7 @@ public class ConstantsUtil implements Constants, LevelConstants {
     /**
      * Number of enemy fishes on the screen
      */
-    public static final int NUMBER_OF_ENEMIES = 20;
+    public static final int NUMBER_OF_ENEMIES = 40;
 
     public static final int TAG_SPRITE_PLAYER = 1;
 
@@ -46,8 +46,8 @@ public class ConstantsUtil implements Constants, LevelConstants {
     public static final short MASK_BITS_WALL = CATEGORY_BIT_PLAYER;
 
 
-    /* 20 seconds for play */
-    public static final int GAME_TIME = 5;
+    /* 99 seconds for play */
+    public static final int GAME_TIME = 99;
 
 
     /* Number of fishes you have to eat before unlocking the the next */

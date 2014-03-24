@@ -28,7 +28,7 @@ public class SceneManager {
 
     public void setScene(BaseScene scene) {
 
-        if (scene instanceof GameScene ) {
+        if (scene instanceof GameScene) {
             ResourcesManager.getInstance().getActivity().runOnUiThread(
                     new Runnable() {
                         @Override
@@ -188,8 +188,8 @@ public class SceneManager {
 
     }
 
-    public void loadEndGameScene(Integer score) {
-        endGameScene = new EndGameScene(score);
+    public void loadEndGameScene(Integer score, Integer numberOfEeatenFishes, FishType fishType) {
+        endGameScene = new EndGameScene(score, numberOfEeatenFishes, fishType);
         setScene(endGameScene);
         gameScene.disposeScene();
         ResourcesManager.getInstance().unloadGameTextures();

@@ -3,6 +3,7 @@ package com.hungryfish.model.scene;
 import com.hungryfish.manager.ResourcesManager;
 import com.hungryfish.manager.SceneManager;
 import com.hungryfish.util.ConstantsUtil;
+import com.hungryfish.util.FishType;
 import com.hungryfish.util.SceneType;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
@@ -18,6 +19,8 @@ public class EndGameScene extends BaseScene implements IOnSceneTouchListener {
 
     /**
      * @param objects objects[0] - Integer score
+     *                objects[1] - Number of eaten fishes
+     *                objects[2] - FishType of player
      */
     public EndGameScene(Object... objects) {
         super(objects);
@@ -25,15 +28,30 @@ public class EndGameScene extends BaseScene implements IOnSceneTouchListener {
 
     @Override
     public void createScene(Object... objects) {
-        createBackground((Integer) objects[0]);
+        createBackground();
+        createScores((Integer) objects[0], (Integer) objects[1], (FishType) objects[2]);
         setOnSceneTouchListener(this);
     }
 
-    private void createBackground(Integer score) {
+    private void createScores(Integer points, Integer eatenFishes, FishType fishType) {
+
+
+        // Eaten fihes
+        attachChild(new Text(400, 400, ResourcesManager.getInstance().getWhiteFont(),
+                "Eaten fishes: " + eatenFishes.toString(), vertexBufferObjectManager));
+
+        // Points
+        attachChild(new Text(400, 300, ResourcesManager.getInstance().getWhiteFont(),
+                "Points: " + points.toString(), vertexBufferObjectManager));
+
+        // Points
+        String pointsString = "Money: " + points.toString() + " * " + fishType.getFishValue() + " = " + String.valueOf(points * fishType.getFishValue());
+        attachChild(new Text(400, 200, ResourcesManager.getInstance().getWhiteFont(), pointsString, vertexBufferObjectManager));
+    }
+
+    private void createBackground() {
         attachChild(new Sprite(ConstantsUtil.SCREEN_WIDTH / 2, ConstantsUtil.SCREEN_HEIGHT / 2,
                 ResourcesManager.getInstance().getEndGameBackgroundTextureRegion(), vertexBufferObjectManager));
-        attachChild(new Text(400, 200, ResourcesManager.getInstance().getWhiteFont(),
-                "score: " + score.toString(), vertexBufferObjectManager));
     }
 
     @Override

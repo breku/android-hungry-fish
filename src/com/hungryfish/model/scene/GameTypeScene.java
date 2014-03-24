@@ -116,6 +116,7 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
 
 
         for (Line line : lineList) {
+            line.setLineWidth(2.0f);
             line.setColor(Color.RED);
             attachChild(line);
         }

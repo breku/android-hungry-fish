@@ -302,8 +302,8 @@ public class GameScene extends BaseScene implements IAccelerationListener {
     private void checkForEndGame() {
         if (endGame) {
             highScoreService.addScore(points);
-            optionsService.updateMoney(points * player.getFishType().getFishValue());
-            SceneManager.getInstance().loadEndGameScene(points);
+            optionsService.updateMoney(points);
+            SceneManager.getInstance().loadEndGameScene(points, numberOfEeatenFishes, player.getFishType());
         }
     }
 
