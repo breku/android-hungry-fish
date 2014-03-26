@@ -1,10 +1,14 @@
 package com.hungryfish.model.scene;
 
 
+import android.widget.Toast;
+import com.hungryfish.handler.ButtonAddUpdateHandler;
 import com.hungryfish.manager.ResourcesManager;
 import com.hungryfish.manager.SceneManager;
+import com.hungryfish.model.shape.ButtonAdd;
 import com.hungryfish.model.shape.Fish;
 import com.hungryfish.service.OptionsService;
+import com.hungryfish.service.PlayerService;
 import com.hungryfish.util.ConstantsUtil;
 import com.hungryfish.util.FishType;
 import com.hungryfish.util.SceneType;
@@ -36,7 +40,9 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
     private List<Rectangle> fishPropertiesRectangleList;
     List<Line> lineList;
     private Integer currentFishSpriteIndex;
+
     private OptionsService optionsService;
+    private PlayerService playerService;
 
     private final float MAX_FISH_SPEED = 8;
     private final float MAX_FISH_POWER = 6;
@@ -44,17 +50,43 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
 
     final int WHITE_RECTANGLE_WIDTH = 200;
 
+    final int TOP_PROPERTY_HEIGHT = 250;
+    final int PROPERTY_STRIDE = 50;
+    final int NUMBER_OF_PROPERITES = 3;
+
+
     private Sprite lock;
 
 
     @Override
     public void createScene(Object... objects) {
+        clearEverything();
         init();
         createBackground();
-        createButtons();
+        createButtonsLeftRight();
         createFishGraphics();
         createFishProperties();
         createMoneyCaptions();
+        createButtonsAdd();
+    }
+
+    private void clearEverything() {
+        clearTouchAreas();
+        clearEntityModifiers();
+        clearUpdateHandlers();
+    }
+
+    private void createButtonsAdd() {
+        List<ButtonAdd> buttonAddList = new ArrayList<ButtonAdd>();
+        for (int i = 0; i < NUMBER_OF_PROPERITES; i++) {
+            ButtonAdd button = new ButtonAdd(650, TOP_PROPERTY_HEIGHT - i * PROPERTY_STRIDE, i);
+            buttonAddList.add(button);
+            registerTouchArea(button);
+            attachChild(button);
+        }
+
+        registerUpdateHandler(new ButtonAddUpdateHandler(buttonAddList, this));
+
     }
 
     private void createMoneyCaptions() {
@@ -64,34 +96,16 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
     }
 
     private void createFishProperties() {
-        final int numberOfProperties = 3;
-
-
         String[] textPropertiesArray = new String[]{"Speed", "Power", "Value"};
-        FishType fishType = fishSpriteList.get(currentFishSpriteIndex).getFishType();
 
-        for (int i = 0; i < numberOfProperties; i++) {
-            Text text = new Text(300, 200 - i * 30, ResourcesManager.getInstance().getBlackFont(), textPropertiesArray[i], vertexBufferObjectManager);
-            Rectangle rectangleWhite = new Rectangle(500, 200 - i * 30, WHITE_RECTANGLE_WIDTH, 10, vertexBufferObjectManager);
+        for (int i = 0; i < NUMBER_OF_PROPERITES; i++) {
+            Text text = new Text(300, TOP_PROPERTY_HEIGHT - i * PROPERTY_STRIDE, ResourcesManager.getInstance().getBlackFont(), textPropertiesArray[i], vertexBufferObjectManager);
+            Rectangle rectangleWhite = new Rectangle(500, TOP_PROPERTY_HEIGHT - i * PROPERTY_STRIDE, WHITE_RECTANGLE_WIDTH, 10, vertexBufferObjectManager);
             attachChild(rectangleWhite);
             attachChild(text);
         }
 
-
-        float speedRectangleWidth = (float) WHITE_RECTANGLE_WIDTH * optionsService.getFishSpeed(fishType) / MAX_FISH_SPEED;
-        float powerRectangleWidth = WHITE_RECTANGLE_WIDTH * optionsService.getFishPower(fishType) / MAX_FISH_POWER;
-        float valueRectangleWidth = WHITE_RECTANGLE_WIDTH * optionsService.getFishValue(fishType) / MAX_FISH_VALUE;
-
-        fishPropertiesRectangleList.add(new Rectangle(500 - ((WHITE_RECTANGLE_WIDTH - speedRectangleWidth) / 2), 200, speedRectangleWidth, 10, vertexBufferObjectManager));
-        fishPropertiesRectangleList.add(new Rectangle(500 - ((WHITE_RECTANGLE_WIDTH - powerRectangleWidth) / 2), 170, powerRectangleWidth, 10, vertexBufferObjectManager));
-        fishPropertiesRectangleList.add(new Rectangle(500 - ((WHITE_RECTANGLE_WIDTH - valueRectangleWidth) / 2), 140, valueRectangleWidth, 10, vertexBufferObjectManager));
-
-        for (Rectangle rectangle : fishPropertiesRectangleList) {
-            rectangle.setColor(Color.GREEN);
-            attachChild(rectangle);
-        }
-
-
+        updateProperties();
         updatePropertyLines();
     }
 
@@ -104,15 +118,15 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
         lineList.clear();
 
         float a = 500 - WHITE_RECTANGLE_WIDTH / 2 + WHITE_RECTANGLE_WIDTH * fishType.getFishSpeed() * 2 / MAX_FISH_SPEED;
-        lineList.add(new Line(a, 195, a, 205, vertexBufferObjectManager));
+        lineList.add(new Line(a, TOP_PROPERTY_HEIGHT - 5, a, TOP_PROPERTY_HEIGHT + 5, vertexBufferObjectManager));
 
 
         float b = 500 - WHITE_RECTANGLE_WIDTH / 2 + WHITE_RECTANGLE_WIDTH * fishType.getFishPower() * 2 / MAX_FISH_POWER;
-        lineList.add(new Line(b, 165, b, 175, vertexBufferObjectManager));
+        lineList.add(new Line(b, TOP_PROPERTY_HEIGHT - PROPERTY_STRIDE - 5, b, TOP_PROPERTY_HEIGHT - PROPERTY_STRIDE + 5, vertexBufferObjectManager));
 
 
         float c = 500 - WHITE_RECTANGLE_WIDTH / 2 + WHITE_RECTANGLE_WIDTH * fishType.getFishValue() * 2 / MAX_FISH_VALUE;
-        lineList.add(new Line(c, 135, c, 145, vertexBufferObjectManager));
+        lineList.add(new Line(c, TOP_PROPERTY_HEIGHT - 2 * PROPERTY_STRIDE - 5, c, TOP_PROPERTY_HEIGHT - 2 * PROPERTY_STRIDE + 5, vertexBufferObjectManager));
 
 
         for (Line line : lineList) {
@@ -143,13 +157,14 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
         lineList = new ArrayList<Line>();
         currentFishSpriteIndex = 0;
         optionsService = new OptionsService();
+        playerService = new PlayerService();
     }
 
     private void createBackground() {
         attachChild(new Sprite(ConstantsUtil.SCREEN_WIDTH / 2, ConstantsUtil.SCREEN_HEIGHT / 2, resourcesManager.getBackgroundGameTypeTextureRegion(), vertexBufferObjectManager));
     }
 
-    private void createButtons() {
+    private void createButtonsLeftRight() {
         menuScene = new MenuScene(camera);
         menuScene.setPosition(0, 0);
 
@@ -203,11 +218,13 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
                 changeFishRight();
                 updateLock();
                 updateProperties();
+                updatePropertyLines();
                 break;
             case LEFT_BUTTON:
                 changeFishLeft();
                 updateLock();
                 updateProperties();
+                updatePropertyLines();
                 break;
             default:
                 return false;
@@ -228,15 +245,14 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
 
         fishPropertiesRectangleList.clear();
 
-        fishPropertiesRectangleList.add(new Rectangle(500 - ((WHITE_RECTANGLE_WIDTH - speedRectangleWidth) / 2), 200, speedRectangleWidth, 10, vertexBufferObjectManager));
-        fishPropertiesRectangleList.add(new Rectangle(500 - ((WHITE_RECTANGLE_WIDTH - powerRectangleWidth) / 2), 170, powerRectangleWidth, 10, vertexBufferObjectManager));
-        fishPropertiesRectangleList.add(new Rectangle(500 - ((WHITE_RECTANGLE_WIDTH - valueRectangleWidth) / 2), 140, valueRectangleWidth, 10, vertexBufferObjectManager));
+        fishPropertiesRectangleList.add(new Rectangle(500 - ((WHITE_RECTANGLE_WIDTH - speedRectangleWidth) / 2), TOP_PROPERTY_HEIGHT, speedRectangleWidth, 10, vertexBufferObjectManager));
+        fishPropertiesRectangleList.add(new Rectangle(500 - ((WHITE_RECTANGLE_WIDTH - powerRectangleWidth) / 2), TOP_PROPERTY_HEIGHT - PROPERTY_STRIDE, powerRectangleWidth, 10, vertexBufferObjectManager));
+        fishPropertiesRectangleList.add(new Rectangle(500 - ((WHITE_RECTANGLE_WIDTH - valueRectangleWidth) / 2), TOP_PROPERTY_HEIGHT - 2 * PROPERTY_STRIDE, valueRectangleWidth, 10, vertexBufferObjectManager));
 
         for (Rectangle rectangle : fishPropertiesRectangleList) {
             rectangle.setColor(Color.GREEN);
             attachChild(rectangle);
         }
-        updatePropertyLines();
 
     }
 
@@ -264,4 +280,53 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
         currentFishSpriteIndex = (currentFishSpriteIndex + 1) % fishSpriteList.size();
         fishSpriteList.get(currentFishSpriteIndex).setVisible(true);
     }
+
+    public void increaseProperty(int propertyNumber) {
+        boolean propertyIncreased = playerService.increasePropertyFor(propertyNumber, fishSpriteList.get(currentFishSpriteIndex).getFishType());
+        if (propertyIncreased) {
+            updateProperties();
+            showPropertyUpgraded(propertyNumber);
+        } else {
+            showWarningMaxProperty(propertyNumber);
+        }
+
+    }
+
+    private void showPropertyUpgraded(int propertyNumber) {
+        final String finalPropertyName = getPropertyName(propertyNumber);
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(activity, finalPropertyName + " upgraded", 1).show();
+            }
+        });
+    }
+
+    private String getPropertyName(int propertyNumber) {
+        String propertyName = null;
+        switch (propertyNumber) {
+            case 0:
+                propertyName = "Speed";
+                break;
+            case 1:
+                propertyName = "Power";
+                break;
+            case 2:
+                propertyName = "Value";
+                break;
+        }
+        return propertyName;
+    }
+
+
+    private void showWarningMaxProperty(int propertyNumber) {
+        final String finalPropertyName = getPropertyName(propertyNumber);
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(activity, finalPropertyName + " has max value", 1).show();
+            }
+        });
+    }
+
 }

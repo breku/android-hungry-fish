@@ -40,7 +40,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_FISH_VALUE = "FISH_VALUE";
     private static final String COLUMN_FISH_LOCKED = "FISH_LOCKED";
 
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 9;
 
 
     public DatabaseHelper(Context context) {
@@ -63,9 +63,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_PLAYER_OPTIONS + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_FISH_TYPE + " TEXT, " +
-                COLUMN_FISH_POWER + " INTEGER, " +
+                COLUMN_FISH_POWER + " FLOAT, " +
                 COLUMN_FISH_SPEED + " FLOAT, " +
-                COLUMN_FISH_VALUE + " INTEGER, " +
+                COLUMN_FISH_VALUE + " FLOAT, " +
                 COLUMN_FISH_LOCKED + " INTEGER" +
                 ")");
 
@@ -170,13 +170,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
-    public int getFishPower(FishType fishType) {
-        Integer result = null;
+    public Float getFishPower(FishType fishType) {
+        Float result = null;
         SQLiteDatabase database = getReadableDatabase();
         Cursor cursor = database.rawQuery("SELECT " + COLUMN_FISH_POWER + " FROM " + TABLE_PLAYER_OPTIONS + " WHERE " +
                 COLUMN_FISH_TYPE + " = ?", new String[]{fishType.name()});
         while (cursor.moveToNext()) {
-            result = cursor.getInt(0);
+            result = cursor.getFloat(0);
         }
         cursor.close();
         database.close();
@@ -184,13 +184,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public int getFishValue(FishType fishType) {
-        Integer result = null;
+    public Float getFishValue(FishType fishType) {
+        Float result = null;
         SQLiteDatabase database = getReadableDatabase();
         Cursor cursor = database.rawQuery("SELECT " + COLUMN_FISH_VALUE + " FROM " + TABLE_PLAYER_OPTIONS + " WHERE " +
                 COLUMN_FISH_TYPE + " = ?", new String[]{fishType.name()});
         while (cursor.moveToNext()) {
-            result = cursor.getInt(0);
+            result = cursor.getFloat(0);
         }
         cursor.close();
         database.close();
@@ -239,5 +239,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         database.close();
         return result;
+    }
+
+
+    public void increaseSpeedFor(FishType fishType, float speedValue) {
+        SQLiteDatabase database = getWritableDatabase();
+        database.execSQL("UPDATE " + TABLE_PLAYER_OPTIONS + "  SET " + COLUMN_FISH_SPEED + " = " + COLUMN_FISH_SPEED + " + ? WHERE " +
+                COLUMN_FISH_TYPE + " = ?", new String[]{String.valueOf(speedValue), fishType.name()});
+        database.close();
+    }
+
+    public void increaseValueFor(FishType fishType, float fishValue) {
+        SQLiteDatabase database = getWritableDatabase();
+        database.execSQL("UPDATE " + TABLE_PLAYER_OPTIONS + "  SET " + COLUMN_FISH_VALUE + " = " + COLUMN_FISH_VALUE + " + ? WHERE " +
+                COLUMN_FISH_TYPE + " = ?", new String[]{String.valueOf(fishValue), fishType.name()});
+        database.close();
+    }
+
+
+    public void increasePowerFor(FishType fishType, float fishPower) {
+        SQLiteDatabase database = getWritableDatabase();
+        database.execSQL("UPDATE " + TABLE_PLAYER_OPTIONS + "  SET " + COLUMN_FISH_POWER + " = " + COLUMN_FISH_POWER + " + ? WHERE " +
+                COLUMN_FISH_TYPE + " = ?", new String[]{String.valueOf(fishPower), fishType.name()});
+        database.close();
     }
 }

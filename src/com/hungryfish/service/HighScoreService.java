@@ -8,8 +8,6 @@ import java.util.List;
  */
 public class HighScoreService extends BaseService {
 
-    DatabaseHelper databaseHelper = new DatabaseHelper(activity);
-
     public void addScore(Integer score) {
         databaseHelper.addScore(score);
     }

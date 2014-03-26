@@ -78,7 +78,8 @@ public class ResourcesManager {
 
     // Game Type
     private ITextureRegion backgroundGameTypeTextureRegion, starGoldTextureRegion, starWhiteTextureRegion,
-            playButtonTextureRegion, leftArrowTextureRegion, rightArrowTextureRegion, lockTextureRegion ;
+            playButtonTextureRegion, leftArrowTextureRegion, rightArrowTextureRegion, lockTextureRegion,
+            buttonAddTextureRegion;
 
 
     private List<Sound> winSoundList, loseSoundList, halfWinSoundList;
@@ -154,10 +155,11 @@ public class ResourcesManager {
 
         starGoldTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTypeTextureAtlas, activity, "goldStar.png");
         starWhiteTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTypeTextureAtlas, activity, "whiteStar.png");
-        lockTextureRegion= BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTypeTextureAtlas, activity, "lock.png");
+        lockTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTypeTextureAtlas, activity, "lock.png");
         playButtonTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTypeTextureAtlas, activity, "playButton.png");
-        leftArrowTextureRegion= BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTypeTextureAtlas, activity, "leftArrow.png");
+        leftArrowTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTypeTextureAtlas, activity, "leftArrow.png");
         rightArrowTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTypeTextureAtlas, activity, "rightArrow.png");
+        buttonAddTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTypeTextureAtlas, activity, "buttonAdd.png");
 
         try {
             gameTypeTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(1, 1, 1));
@@ -575,5 +577,9 @@ public class ResourcesManager {
 
     public ITextureRegion getLockTextureRegion() {
         return lockTextureRegion;
+    }
+
+    public ITextureRegion getButtonAddTextureRegion() {
+        return buttonAddTextureRegion;
     }
 }

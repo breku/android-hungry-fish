@@ -9,17 +9,15 @@ import com.hungryfish.util.FishType;
 public class OptionsService extends BaseService {
 
 
-    DatabaseHelper databaseHelper = new DatabaseHelper(activity);
-
     public boolean isFishLocked(FishType fishType) {
         return databaseHelper.isFishLocked(fishType);
     }
 
-    public int getFishPower(FishType fishType) {
+    public Float getFishPower(FishType fishType) {
         return databaseHelper.getFishPower(fishType);
     }
 
-    public int getFishValue(FishType fishType) {
+    public Float getFishValue(FishType fishType) {
         return databaseHelper.getFishValue(fishType);
     }
 

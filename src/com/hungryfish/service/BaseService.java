@@ -10,6 +10,8 @@ import org.andengine.engine.Engine;
  */
 public abstract class BaseService {
 
+
+    protected DatabaseHelper databaseHelper;
     protected Engine engine;
     protected Activity activity;
     protected ResourcesManager resourcesManager;
@@ -18,5 +20,6 @@ public abstract class BaseService {
         this.resourcesManager = ResourcesManager.getInstance();
         this.engine = resourcesManager.getEngine();
         this.activity = resourcesManager.getActivity();
+        databaseHelper = new DatabaseHelper(activity);
     }
 }
