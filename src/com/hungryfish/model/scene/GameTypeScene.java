@@ -38,7 +38,9 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
 
     private List<Fish> fishSpriteList;
     private List<Rectangle> fishPropertiesRectangleList;
-    List<Line> lineList;
+    private List<Line> lineList;
+    List<ButtonAdd> buttonAddList;
+
     private Integer currentFishSpriteIndex;
 
     private OptionsService optionsService;
@@ -77,7 +79,6 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
     }
 
     private void createButtonsAdd() {
-        List<ButtonAdd> buttonAddList = new ArrayList<ButtonAdd>();
         for (int i = 0; i < NUMBER_OF_PROPERITES; i++) {
             ButtonAdd button = new ButtonAdd(650, TOP_PROPERTY_HEIGHT - i * PROPERTY_STRIDE, i);
             buttonAddList.add(button);
@@ -138,13 +139,21 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
     }
 
     private void createFishGraphics() {
-        for (FishType fishType : FishType.values()) {
-            Fish fish = new Fish(400, 350, fishType);
+
+        for (int i = 0; i < FishType.values().length; i++) {
+
+            Fish fish = new Fish(400, 350, FishType.values()[i]);
             fish.setVisible(false);
             fishSpriteList.add(fish);
             attachChild(fish);
+
+            if (FishType.values()[i].getFishLevel() == 0) {
+                fish.setVisible(true);
+                currentFishSpriteIndex = i;
+            }
+
+
         }
-        fishSpriteList.get(currentFishSpriteIndex).setVisible(true);
 
         lock = new Sprite(400, 350, ResourcesManager.getInstance().getLockTextureRegion(), vertexBufferObjectManager);
         lock.setVisible(false);
@@ -155,6 +164,7 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
         fishSpriteList = new ArrayList<Fish>();
         fishPropertiesRectangleList = new ArrayList<Rectangle>();
         lineList = new ArrayList<Line>();
+        buttonAddList = new ArrayList<ButtonAdd>();
         currentFishSpriteIndex = 0;
         optionsService = new OptionsService();
         playerService = new PlayerService();
@@ -273,13 +283,33 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
             currentFishSpriteIndex--;
         }
         fishSpriteList.get(currentFishSpriteIndex).setVisible(true);
+
+        updateButtonsTouchArea();
     }
+
 
     private void changeFishRight() {
         fishSpriteList.get(currentFishSpriteIndex).setVisible(false);
         currentFishSpriteIndex = (currentFishSpriteIndex + 1) % fishSpriteList.size();
         fishSpriteList.get(currentFishSpriteIndex).setVisible(true);
+        updateButtonsTouchArea();
     }
+
+
+    private void updateButtonsTouchArea() {
+        for (ButtonAdd buttonAdd : buttonAddList) {
+            unregisterTouchArea(buttonAdd);
+        }
+
+        if (!optionsService.isFishLocked(fishSpriteList.get(currentFishSpriteIndex).getFishType())) {
+            for (ButtonAdd buttonAdd : buttonAddList) {
+                registerTouchArea(buttonAdd);
+            }
+        }
+
+
+    }
+
 
     public void increaseProperty(int propertyNumber) {
         boolean propertyIncreased = playerService.increasePropertyFor(propertyNumber, fishSpriteList.get(currentFishSpriteIndex).getFishType());

@@ -19,8 +19,6 @@ public class ButtonAdd extends Sprite {
         this.clicked = false;
     }
 
-    //TODO Fish locked - turn button off
-
     @Override
     public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
         if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_UP) {

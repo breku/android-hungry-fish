@@ -40,7 +40,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_FISH_VALUE = "FISH_VALUE";
     private static final String COLUMN_FISH_LOCKED = "FISH_LOCKED";
 
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 12;
 
 
     public DatabaseHelper(Context context) {
@@ -104,7 +104,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // Player options table
         for (FishType fishType : FishType.values()) {
-            if (fishType.ordinal() == 0) {
+            if (fishType.getFishLevel() == 0) {
                 createDefaultFishRecord(sqLiteDatabase, fishType, 0);
             } else {
                 createDefaultFishRecord(sqLiteDatabase, fishType, 1);
