@@ -79,7 +79,7 @@ public class ResourcesManager {
     // Game Type
     private ITextureRegion backgroundGameTypeTextureRegion, starGoldTextureRegion, starWhiteTextureRegion,
             playButtonTextureRegion, leftArrowTextureRegion, rightArrowTextureRegion, lockTextureRegion,
-            buttonAddTextureRegion;
+            buttonAddTextureRegion, buyButtonTextureRegion;
 
 
     private List<Sound> winSoundList, loseSoundList, halfWinSoundList;
@@ -160,6 +160,7 @@ public class ResourcesManager {
         leftArrowTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTypeTextureAtlas, activity, "leftArrow.png");
         rightArrowTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTypeTextureAtlas, activity, "rightArrow.png");
         buttonAddTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTypeTextureAtlas, activity, "buttonAdd.png");
+        buyButtonTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTypeTextureAtlas, activity, "buyButton.png");
 
         try {
             gameTypeTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(1, 1, 1));
@@ -581,5 +582,9 @@ public class ResourcesManager {
 
     public ITextureRegion getButtonAddTextureRegion() {
         return buttonAddTextureRegion;
+    }
+
+    public ITextureRegion getBuyButtonTextureRegion() {
+        return buyButtonTextureRegion;
     }
 }

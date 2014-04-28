@@ -16,12 +16,19 @@ public enum FishType implements Comparable<FishType> {
     private float fishPower;
     private float fishSpeed;
     private Integer fishLevel;
+    private Integer fishPrice;
 
-    private FishType(Integer fishValue, Integer fishPower, float fishSpeed, Integer fishLevel) {
+
+    private FishType(Integer fishValue, Integer fishPower, float fishSpeed, Integer fishLevel, Integer fishPrice) {
         this.fishValue = fishValue;
         this.fishPower = fishPower;
         this.fishSpeed = fishSpeed;
         this.fishLevel = fishLevel;
+        this.fishPrice = fishPrice;
+    }
+
+    private FishType(Integer fishValue, Integer fishPower, float fishSpeed, Integer fishLevel) {
+        this(fishValue, fishPower, fishSpeed, fishLevel, ConstantsUtil.PRICE_MULTIPLIER_COST * (fishLevel + 1));
     }
 
     public float getFishSpeed() {
@@ -43,5 +50,9 @@ public enum FishType implements Comparable<FishType> {
 
     public Integer getFishLevel() {
         return fishLevel;
+    }
+
+    public Integer getFishPrice() {
+        return fishPrice;
     }
 }

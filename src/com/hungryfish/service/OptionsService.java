@@ -25,11 +25,23 @@ public class OptionsService extends BaseService {
         return databaseHelper.getFishSpeed(fishType);
     }
 
+    public Integer getFishPriceFor(FishType fishType) {
+        return databaseHelper.getFishPrice(fishType);
+    }
+
     public void updateMoney(Integer points) {
         databaseHelper.updateMoney(points);
     }
 
     public Integer getMoney() {
         return databaseHelper.getMoney();
+    }
+
+    public void unlockFish(FishType fishType) {
+        databaseHelper.unlockFish(fishType);
+    }
+
+    public void setMoney(Integer money) {
+        databaseHelper.setMoney(money);
     }
 }

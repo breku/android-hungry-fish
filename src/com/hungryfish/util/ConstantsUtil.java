@@ -50,6 +50,9 @@ public class ConstantsUtil implements Constants, LevelConstants {
     public static final int GAME_TIME = 99;
 
 
+    public final static Integer PRICE_MULTIPLIER_COST = 400;
+    public final static Integer PROPERTY_MULTIPLIER_COST = 100;
+
     /* Number of fishes you have to eat before unlocking the the next */
     public static final int UNLOCK_LEVEL_1 = 10;
     public static final int UNLOCK_LEVEL_2 = 30;

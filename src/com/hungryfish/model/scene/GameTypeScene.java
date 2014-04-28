@@ -20,6 +20,7 @@ import org.andengine.entity.scene.menu.item.SpriteMenuItem;
 import org.andengine.entity.scene.menu.item.decorator.ScaleMenuItemDecorator;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
+import org.andengine.input.touch.TouchEvent;
 import org.andengine.util.adt.color.Color;
 
 import java.util.ArrayList;
@@ -39,7 +40,8 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
     private List<Fish> fishSpriteList;
     private List<Rectangle> fishPropertiesRectangleList;
     private List<Line> lineList;
-    List<ButtonAdd> buttonAddList;
+    private List<Text> propertyCostTextList;
+    private List<ButtonAdd> buttonAddList;
 
     private Integer currentFishSpriteIndex;
 
@@ -56,8 +58,9 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
     final int PROPERTY_STRIDE = 50;
     final int NUMBER_OF_PROPERITES = 3;
 
-
     private Sprite lock;
+    private Text fishPriceText;
+    private Sprite buttonBuy;
 
 
     @Override
@@ -70,6 +73,32 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
         createFishProperties();
         createMoneyCaptions();
         createButtonsAdd();
+        createButtonBuy();
+    }
+
+    private void createButtonBuy() {
+        buttonBuy = new Sprite(150, 200, ResourcesManager.getInstance().getBuyButtonTextureRegion(), vertexBufferObjectManager) {
+            @Override
+            public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
+                if (pSceneTouchEvent.isActionUp()) {
+                    Integer fishPrice = optionsService.getFishPriceFor(getCurrentFishType());
+                    Integer money = optionsService.getMoney();
+                    if (money >= fishPrice) {
+                        optionsService.unlockFish(getCurrentFishType());
+                        optionsService.setMoney(money - fishPrice);
+                        lock.setVisible(false);
+                        fishPriceText.setVisible(false);
+                    } else {
+                        showWarningNotEnoughMoney();
+                    }
+                    return true;
+                }
+                return false;
+            }
+        };
+        buttonBuy.setVisible(false);
+        registerTouchArea(buttonBuy);
+        attachChild(buttonBuy);
     }
 
     private void clearEverything() {
@@ -80,7 +109,10 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
 
     private void createButtonsAdd() {
         for (int i = 0; i < NUMBER_OF_PROPERITES; i++) {
-            ButtonAdd button = new ButtonAdd(650, TOP_PROPERTY_HEIGHT - i * PROPERTY_STRIDE, i);
+            int x = 650;
+            int y = TOP_PROPERTY_HEIGHT - i * PROPERTY_STRIDE;
+            ButtonAdd button = new ButtonAdd(x, y, i);
+            createPropertyCost(x, y);
             buttonAddList.add(button);
             registerTouchArea(button);
             attachChild(button);
@@ -90,8 +122,19 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
 
     }
 
+    private void createPropertyCost(int x, int y) {
+        Integer propertyUpgradeCost = getPropertyCost();
+        Text text = new Text(x + 70, y, ResourcesManager.getInstance().getBlackFont(), propertyUpgradeCost + " $", vertexBufferObjectManager);
+        attachChild(text);
+        propertyCostTextList.add(text);
+    }
+
+    private Integer getPropertyCost() {
+        return ConstantsUtil.PROPERTY_MULTIPLIER_COST * (getCurrentFishType().getFishLevel() + 1);
+    }
+
     private void createMoneyCaptions() {
-        String money = "Money: " + optionsService.getMoney();
+        String money = "Money:  " + optionsService.getMoney() + " $";
         Text moneyText = new Text(400, 440, ResourcesManager.getInstance().getBlackFont(), money, vertexBufferObjectManager);
         attachChild(moneyText);
     }
@@ -112,7 +155,7 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
 
 
     private void updatePropertyLines() {
-        FishType fishType = fishSpriteList.get(currentFishSpriteIndex).getFishType();
+        FishType fishType = getCurrentFishType();
         for (Line line : lineList) {
             line.setVisible(false);
         }
@@ -157,6 +200,12 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
 
         lock = new Sprite(400, 350, ResourcesManager.getInstance().getLockTextureRegion(), vertexBufferObjectManager);
         lock.setVisible(false);
+
+        Integer fishPrice = optionsService.getFishPriceFor(getCurrentFishType());
+        fishPriceText = new Text(400, 300, ResourcesManager.getInstance().getBlackFont(), "Cost:  " + fishPrice + " $", vertexBufferObjectManager);
+        fishPriceText.setVisible(false);
+        attachChild(fishPriceText);
+
         attachChild(lock);
     }
 
@@ -165,6 +214,7 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
         fishPropertiesRectangleList = new ArrayList<Rectangle>();
         lineList = new ArrayList<Line>();
         buttonAddList = new ArrayList<ButtonAdd>();
+        propertyCostTextList = new ArrayList<Text>();
         currentFishSpriteIndex = 0;
         optionsService = new OptionsService();
         playerService = new PlayerService();
@@ -222,19 +272,23 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
     public boolean onMenuItemClicked(MenuScene pMenuScene, IMenuItem pMenuItem, float pMenuItemLocalX, float pMenuItemLocalY) {
         switch (pMenuItem.getID()) {
             case PLAY_BUTTON:
-                SceneManager.getInstance().loadGameScene(fishSpriteList.get(currentFishSpriteIndex).getFishType());
+                if (!optionsService.isFishLocked(getCurrentFishType())) {
+                    SceneManager.getInstance().loadGameScene(getCurrentFishType());
+                }
                 break;
             case RIGHT_BUTTON:
                 changeFishRight();
                 updateLock();
                 updateProperties();
                 updatePropertyLines();
+                updateFishPrice();
                 break;
             case LEFT_BUTTON:
                 changeFishLeft();
                 updateLock();
                 updateProperties();
                 updatePropertyLines();
+                updateFishPrice();
                 break;
             default:
                 return false;
@@ -244,7 +298,7 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
 
     private void updateProperties() {
 
-        FishType fishType = fishSpriteList.get(currentFishSpriteIndex).getFishType();
+        FishType fishType = getCurrentFishType();
         float speedRectangleWidth = (float) WHITE_RECTANGLE_WIDTH * optionsService.getFishSpeed(fishType) / MAX_FISH_SPEED;
         float powerRectangleWidth = WHITE_RECTANGLE_WIDTH * optionsService.getFishPower(fishType) / MAX_FISH_POWER;
         float valueRectangleWidth = WHITE_RECTANGLE_WIDTH * optionsService.getFishValue(fishType) / MAX_FISH_VALUE;
@@ -270,8 +324,22 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
         Fish fish = fishSpriteList.get(currentFishSpriteIndex);
         if (optionsService.isFishLocked(fish.getFishType())) {
             lock.setVisible(true);
+            fishPriceText.setVisible(true);
+            buttonBuy.setVisible(true);
+
+
         } else {
             lock.setVisible(false);
+            fishPriceText.setVisible(false);
+            buttonBuy.setVisible(false);
+        }
+    }
+
+    private void updateFishPrice() {
+        Integer fishPrice = optionsService.getFishPriceFor(getCurrentFishType());
+        fishPriceText.setText("Cost:  " + fishPrice + " $");
+        for (Text text : propertyCostTextList) {
+            text.setText(getPropertyCost() + " $");
         }
     }
 
@@ -301,7 +369,7 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
             unregisterTouchArea(buttonAdd);
         }
 
-        if (!optionsService.isFishLocked(fishSpriteList.get(currentFishSpriteIndex).getFishType())) {
+        if (!optionsService.isFishLocked(getCurrentFishType())) {
             for (ButtonAdd buttonAdd : buttonAddList) {
                 registerTouchArea(buttonAdd);
             }
@@ -312,14 +380,18 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
 
 
     public void increaseProperty(int propertyNumber) {
-        boolean propertyIncreased = playerService.increasePropertyFor(propertyNumber, fishSpriteList.get(currentFishSpriteIndex).getFishType());
-        if (propertyIncreased) {
+        if (playerService.maxPropertyValue(propertyNumber, getCurrentFishType())) {
+            showWarningMaxProperty(propertyNumber);
+            return;
+        }
+
+        if (optionsService.getMoney() >= getPropertyCost()) {
+            playerService.increasePropertyFor(propertyNumber, getCurrentFishType());
             updateProperties();
             showPropertyUpgraded(propertyNumber);
         } else {
-            showWarningMaxProperty(propertyNumber);
+            showWarningNotEnoughMoney();
         }
-
     }
 
     private void showPropertyUpgraded(int propertyNumber) {
@@ -357,6 +429,28 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
                 Toast.makeText(activity, finalPropertyName + " has max value", 1).show();
             }
         });
+    }
+
+    private void showWarningNotEnoughMoney() {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(activity, "Not enough money", 1).show();
+            }
+        });
+    }
+
+    private void showFishBoughtText() {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(activity, "Fish bought", 1).show();
+            }
+        });
+    }
+
+    private FishType getCurrentFishType() {
+        return fishSpriteList.get(currentFishSpriteIndex).getFishType();
     }
 
 }
