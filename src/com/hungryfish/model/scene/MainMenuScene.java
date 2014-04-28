@@ -67,7 +67,7 @@ public class MainMenuScene extends BaseScene implements MenuScene.IOnMenuItemCli
 
     @Override
     public void onBackKeyPressed() {
-        System.exit(0);
+        exitApplication();
     }
 
     @Override
@@ -93,7 +93,8 @@ public class MainMenuScene extends BaseScene implements MenuScene.IOnMenuItemCli
                 SceneManager.getInstance().loadAboutScene();
                 break;
             case EXIT:
-                System.exit(0);
+                exitApplication();
+                break;
             case RECORDS:
                 SceneManager.getInstance().loadHighScoreSceneFrom(SceneType.MENU, null);
                 break;
@@ -102,4 +103,9 @@ public class MainMenuScene extends BaseScene implements MenuScene.IOnMenuItemCli
         }
         return false;
     }
+
+    private void exitApplication() {
+        System.exit(0);
+    }
+
 }

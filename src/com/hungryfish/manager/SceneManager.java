@@ -3,12 +3,14 @@ package com.hungryfish.manager;
 import com.google.ads.AdView;
 import com.hungryfish.activity.MyActivity;
 import com.hungryfish.model.scene.*;
+import com.hungryfish.rating.AppRater;
 import com.hungryfish.util.ConstantsUtil;
 import com.hungryfish.util.FishType;
 import com.hungryfish.util.SceneType;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.ui.IGameInterface;
+import org.andengine.ui.activity.BaseGameActivity;
 
 /**
  * User: Breku
@@ -70,6 +72,19 @@ public class SceneManager {
         loadingScene = new LoadingScene();
         setScene(menuScene);
         disposeSplashScene();
+        showAppRaiting();
+
+    }
+
+    private void showAppRaiting() {
+        final BaseGameActivity activity = ResourcesManager.getInstance().getActivity();
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AppRater.app_launched(activity);
+
+            }
+        });
     }
 
 
