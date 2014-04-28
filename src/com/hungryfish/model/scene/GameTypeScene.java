@@ -59,8 +59,10 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
     final int NUMBER_OF_PROPERITES = 3;
 
     private Sprite lock;
-    private Text fishPriceText;
     private Sprite buttonBuy;
+
+    private Text fishPriceText;
+    private Text moneyText;
 
 
     @Override
@@ -76,6 +78,7 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
         createButtonBuy();
     }
 
+    // TODO Przenieść do update hanldera raczej
     private void createButtonBuy() {
         buttonBuy = new Sprite(150, 200, ResourcesManager.getInstance().getBuyButtonTextureRegion(), vertexBufferObjectManager) {
             @Override
@@ -88,6 +91,8 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
                         optionsService.setMoney(money - fishPrice);
                         lock.setVisible(false);
                         fishPriceText.setVisible(false);
+                        showFishBoughtText();
+                        refreshMoney();
                     } else {
                         showWarningNotEnoughMoney();
                     }
@@ -135,7 +140,7 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
 
     private void createMoneyCaptions() {
         String money = "Money:  " + optionsService.getMoney() + " $";
-        Text moneyText = new Text(400, 440, ResourcesManager.getInstance().getBlackFont(), money, vertexBufferObjectManager);
+        moneyText = new Text(400, 440, ResourcesManager.getInstance().getBlackFont(), money, vertexBufferObjectManager);
         attachChild(moneyText);
     }
 
@@ -326,8 +331,6 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
             lock.setVisible(true);
             fishPriceText.setVisible(true);
             buttonBuy.setVisible(true);
-
-
         } else {
             lock.setVisible(false);
             fishPriceText.setVisible(false);
@@ -385,13 +388,22 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
             return;
         }
 
-        if (optionsService.getMoney() >= getPropertyCost()) {
+        Integer money = optionsService.getMoney();
+        Integer propertyCost = getPropertyCost();
+        if (money >= propertyCost) {
             playerService.increasePropertyFor(propertyNumber, getCurrentFishType());
             updateProperties();
             showPropertyUpgraded(propertyNumber);
+            optionsService.setMoney(money - propertyCost);
+            refreshMoney();
         } else {
             showWarningNotEnoughMoney();
         }
+    }
+
+    private void refreshMoney() {
+        String money = "Money:  " + optionsService.getMoney() + " $";
+        moneyText.setText(money);
     }
 
     private void showPropertyUpgraded(int propertyNumber) {
