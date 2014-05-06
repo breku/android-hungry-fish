@@ -359,8 +359,9 @@ public class GameScene extends BaseScene implements IAccelerationListener {
     public void updatePossibleFishToEat() {
 
         for (Fish fish : possibleFishToEat) {
-            if ((points * ((FishBodyData) player.getCurrentBody().getUserData()).getFishPower()) >=
-                    fish.getFishType().getFishLevel() * fish.getFishType().getFishLevel() * ConstantsUtil.UNLOCK_LEVEL_MULTIPLIER) {
+            int enemyLevel = fish.getFishType().getFishLevel();
+            float fishPower = ((FishBodyData) player.getCurrentBody().getUserData()).getFishPower();
+            if (points * fishPower >= Math.pow(enemyLevel, 3) * ConstantsUtil.UNLOCK_LEVEL_MULTIPLIER) {
                 fish.setAlpha(1.0f);
             }
         }

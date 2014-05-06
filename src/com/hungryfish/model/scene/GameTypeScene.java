@@ -131,13 +131,16 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
 
     private void createPropertyCost(int x, int y) {
         Integer propertyUpgradeCost = getPropertyCost();
-        Text text = new Text(x + 70, y, ResourcesManager.getInstance().getBlackFont(), propertyUpgradeCost + " $", vertexBufferObjectManager);
+        Text text = new Text(x + 70, y, ResourcesManager.getInstance().getBlackFont(), "0123456789 $", vertexBufferObjectManager);
+        text.setText(propertyUpgradeCost + " $");
         attachChild(text);
         propertyCostTextList.add(text);
     }
 
     private Integer getPropertyCost() {
-        return ConstantsUtil.PROPERTY_MULTIPLIER_COST * (getCurrentFishType().getFishLevel() + 1);
+        int fishLevel = getCurrentFishType().getFishLevel();
+
+        return ConstantsUtil.PROPERTY_MULTIPLIER_COST * (int) Math.pow(fishLevel + 1, 3);
     }
 
     private void createMoneyCaptions() {

@@ -51,11 +51,11 @@ public class ConstantsUtil implements Constants, LevelConstants {
 
 
     public final static Integer PRICE_MULTIPLIER_COST = 600;
-    public final static Integer PROPERTY_MULTIPLIER_COST = 100;
+    public final static Integer PROPERTY_MULTIPLIER_COST = 10;
 
     /* You can eat fish if:
-    *       points * power >= fishLevel * fishLevel * UNLOCK_LEVEL_MULTIPLIER  */
-    public static final int UNLOCK_LEVEL_MULTIPLIER = 20;
+    *       points * power >= fishLevel * fishLevel * fishLevel * UNLOCK_LEVEL_MULTIPLIER  */
+    public static final int UNLOCK_LEVEL_MULTIPLIER = 10;
 
 
 }

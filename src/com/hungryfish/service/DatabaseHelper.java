@@ -42,7 +42,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_FISH_PRICE = "FISH_PRICE";
 
 
-    private static final int DATABASE_VERSION = 18;
+    private static final int DATABASE_VERSION = 19;
 
 
     public DatabaseHelper(Context context) {

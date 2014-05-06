@@ -12,6 +12,8 @@ import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
 import org.andengine.input.touch.TouchEvent;
 
+import java.text.DecimalFormat;
+
 /**
  * User: Breku
  * Date: 04.10.13
@@ -64,7 +66,7 @@ public class EndGameScene extends BaseScene implements IOnSceneTouchListener {
 
         // Points
         Float fishValue = optionsService.getFishValue(fishType);
-        String pointsString = "Money: " + points.toString() + " * " + fishValue + " = " + String.valueOf(points * fishValue);
+        String pointsString = "Money: " + points.toString() + " * " + fishValue + " = " + new DecimalFormat("#.#").format(points * fishValue);
         attachChild(new Text(400, 200, ResourcesManager.getInstance().getWhiteFont(), pointsString, vertexBufferObjectManager));
     }
 

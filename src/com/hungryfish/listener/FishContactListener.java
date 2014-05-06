@@ -26,7 +26,8 @@ public class FishContactListener implements ContactListener {
 
             if (x1Data.getName().equals("player") && x2Data.getName().contains("enemy")) {
 
-                if (x1Data.getPoints() * x1Data.getFishPower() >= x2Data.getFishType().getFishLevel() * x2Data.getFishType().getFishLevel() * ConstantsUtil.UNLOCK_LEVEL_MULTIPLIER) {
+                int enemyLevel = x2Data.getFishType().getFishLevel();
+                if (x1Data.getPoints() * x1Data.getFishPower() >= Math.pow(enemyLevel, 3) * ConstantsUtil.UNLOCK_LEVEL_MULTIPLIER) {
                     x2Data.setToRemove(true);
                     x2Data.setKilled(true);
                 } else {
