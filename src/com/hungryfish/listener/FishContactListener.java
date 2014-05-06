@@ -2,6 +2,7 @@ package com.hungryfish.listener;
 
 import com.badlogic.gdx.physics.box2d.*;
 import com.hungryfish.model.shape.FishBodyData;
+import com.hungryfish.util.ConstantsUtil;
 
 /**
  * User: Breku
@@ -24,8 +25,14 @@ public class FishContactListener implements ContactListener {
 
 
             if (x1Data.getName().equals("player") && x2Data.getName().contains("enemy")) {
-                x2Data.setToRemove(true);
-                x2Data.setKilled(true);
+
+                if (x1Data.getPoints() * x1Data.getFishPower() >= x2Data.getFishType().getFishLevel() * x2Data.getFishType().getFishLevel() * ConstantsUtil.UNLOCK_LEVEL_MULTIPLIER) {
+                    x2Data.setToRemove(true);
+                    x2Data.setKilled(true);
+                } else {
+                    x1Data.setToRemove(true);
+                    x1Data.setKilled(true);
+                }
             }
         }
 

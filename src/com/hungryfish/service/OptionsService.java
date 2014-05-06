@@ -2,6 +2,8 @@ package com.hungryfish.service;
 
 import com.hungryfish.util.FishType;
 
+import java.text.DecimalFormat;
+
 /**
  * User: Breku
  * Date: 23.03.14
@@ -18,7 +20,8 @@ public class OptionsService extends BaseService {
     }
 
     public Float getFishValue(FishType fishType) {
-        return databaseHelper.getFishValue(fishType);
+        String valueFormatted = new DecimalFormat("#.#").format(databaseHelper.getFishValue(fishType));
+        return Float.valueOf(valueFormatted);
     }
 
     public float getFishSpeed(FishType fishType) {
@@ -29,19 +32,20 @@ public class OptionsService extends BaseService {
         return databaseHelper.getFishPrice(fishType);
     }
 
-    public void updateMoney(Integer points) {
+    public void updateMoney(Float points) {
         databaseHelper.updateMoney(points);
     }
 
-    public Integer getMoney() {
-        return databaseHelper.getMoney();
+    public Float getMoney() {
+        String moneyFormatted = new DecimalFormat("#.#").format(databaseHelper.getMoney());
+        return Float.valueOf(moneyFormatted);
     }
 
     public void unlockFish(FishType fishType) {
         databaseHelper.unlockFish(fishType);
     }
 
-    public void setMoney(Integer money) {
+    public void setMoney(Float money) {
         databaseHelper.setMoney(money);
     }
 }

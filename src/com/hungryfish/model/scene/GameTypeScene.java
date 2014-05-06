@@ -58,6 +58,8 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
     final int PROPERTY_STRIDE = 50;
     final int NUMBER_OF_PROPERITES = 3;
 
+    private Toast currentToast;
+
     private Sprite lock;
     private Sprite buttonBuy;
 
@@ -78,19 +80,19 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
         createButtonBuy();
     }
 
-    // TODO Przenieść do update hanldera raczej
     private void createButtonBuy() {
         buttonBuy = new Sprite(150, 200, ResourcesManager.getInstance().getBuyButtonTextureRegion(), vertexBufferObjectManager) {
             @Override
             public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
-                if (pSceneTouchEvent.isActionUp()) {
+                if (pSceneTouchEvent.isActionUp() && buttonBuy.isVisible()) {
                     Integer fishPrice = optionsService.getFishPriceFor(getCurrentFishType());
-                    Integer money = optionsService.getMoney();
+                    Float money = optionsService.getMoney();
                     if (money >= fishPrice) {
                         optionsService.unlockFish(getCurrentFishType());
                         optionsService.setMoney(money - fishPrice);
                         lock.setVisible(false);
                         fishPriceText.setVisible(false);
+                        buttonBuy.setVisible(false);
                         showFishBoughtText();
                         refreshMoney();
                     } else {
@@ -388,7 +390,7 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
             return;
         }
 
-        Integer money = optionsService.getMoney();
+        Float money = optionsService.getMoney();
         Integer propertyCost = getPropertyCost();
         if (money >= propertyCost) {
             playerService.increasePropertyFor(propertyNumber, getCurrentFishType());
@@ -411,7 +413,11 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(activity, finalPropertyName + " upgraded", 1).show();
+                if (currentToast != null) {
+                    currentToast.cancel();
+                }
+                currentToast = Toast.makeText(activity, finalPropertyName + " upgraded", 1);
+                currentToast.show();
             }
         });
     }
@@ -438,7 +444,11 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(activity, finalPropertyName + " has max value", 1).show();
+                if (currentToast != null) {
+                    currentToast.cancel();
+                }
+                currentToast = Toast.makeText(activity, finalPropertyName + " has max value", 1);
+                currentToast.show();
             }
         });
     }
@@ -447,7 +457,11 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(activity, "Not enough money", 1).show();
+                if (currentToast != null) {
+                    currentToast.cancel();
+                }
+                currentToast = Toast.makeText(activity, "Not enough money", 1);
+                currentToast.show();
             }
         });
     }
@@ -456,7 +470,11 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(activity, "Fish bought", 1).show();
+                if (currentToast != null) {
+                    currentToast.cancel();
+                }
+                currentToast = Toast.makeText(activity, "Fish bought", 1);
+                currentToast.show();
             }
         });
     }

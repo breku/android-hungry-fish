@@ -42,7 +42,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_FISH_PRICE = "FISH_PRICE";
 
 
-    private static final int DATABASE_VERSION = 17;
+    private static final int DATABASE_VERSION = 18;
 
 
     public DatabaseHelper(Context context) {
@@ -59,7 +59,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_MAIN_OPTIONS + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_OPTION_SOUND + " INTEGER, " +
-                COLUMN_OPTION_MONEY + " INTEGER" +
+                COLUMN_OPTION_MONEY + " FLOAT" +
                 ")");
 
         sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_PLAYER_OPTIONS + " (" +
@@ -240,19 +240,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result.subList(0, 5);
     }
 
-    public void updateMoney(Integer points) {
+    public void updateMoney(Float amount) {
         SQLiteDatabase database = getWritableDatabase();
-        database.execSQL("UPDATE " + TABLE_MAIN_OPTIONS + "  SET " + COLUMN_OPTION_MONEY + " = " + COLUMN_OPTION_MONEY + " + ?", new String[]{String.valueOf(points)});
+        database.execSQL("UPDATE " + TABLE_MAIN_OPTIONS + "  SET " + COLUMN_OPTION_MONEY + " = " + COLUMN_OPTION_MONEY + " + ?", new String[]{String.valueOf(amount)});
         database.close();
     }
 
 
-    public Integer getMoney() {
-        Integer result = null;
+    public Float getMoney() {
+        Float result = null;
         SQLiteDatabase database = getReadableDatabase();
         Cursor cursor = database.rawQuery("SELECT " + COLUMN_OPTION_MONEY + " FROM " + TABLE_MAIN_OPTIONS, new String[]{});
         while (cursor.moveToNext()) {
-            result = cursor.getInt(0);
+            result = cursor.getFloat(0);
         }
         cursor.close();
         database.close();
@@ -289,7 +289,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         database.close();
     }
 
-    public void setMoney(Integer money) {
+    public void setMoney(Float money) {
         SQLiteDatabase database = getWritableDatabase();
         database.execSQL("UPDATE " + TABLE_MAIN_OPTIONS + "  SET " + COLUMN_OPTION_MONEY + " = ?", new String[]{String.valueOf(money)});
         database.close();

@@ -34,7 +34,8 @@ public class FishPool extends GenericPool<Fish> {
         fishType = fishType.next();
         counter++;
 
-        FishBodyData fishBodyData = new FishBodyData("enemyFish " + fishType.name() + " " + counter, counter);
+        FishBodyData fishBodyData = new FishBodyData("enemyFish " + fishType.name() + " " + counter, counter, fishType);
+        fishBodyData.updateActualFishParameters(fishType.getFishValue(), fishType.getFishPower(), fishType.getFishSpeed());
         if (random.nextBoolean()) {
             fish = new Fish(random.nextInt(50) + ConstantsUtil.RIGHT_BORDER + 200, random.nextInt(ConstantsUtil.TOP_BORDER - ConstantsUtil.BOTTOM_BORDER - 50) + 25,
                     fishType, physicsWorld, true, fishBodyData, true, counter);

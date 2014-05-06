@@ -58,6 +58,7 @@ public class Fish extends AnimatedSprite {
         createPhysics(physicsWorld, fishBodyData);
     }
 
+
     private void createPhysics(PhysicsWorld physicsWorld, FishBodyData bodyUserData) {
 
         ITriangulationAlgoritm triangulationAlgoritm = new EarClippingTriangulator();
@@ -142,7 +143,8 @@ public class Fish extends AnimatedSprite {
                 currentBody.setTransform(currentBody.getPosition(), currentBody.getAngle() + (float) Math.toRadians(180));
             }
         }
-        currentBody.setLinearVelocity(data.getX() * fishType.getFishSpeed(), data.getY() * fishType.getFishSpeed());
+        float fishSpeed = ((FishBodyData) currentBody.getUserData()).getFishSpeed();
+        currentBody.setLinearVelocity(data.getX() * fishSpeed, data.getY() * fishSpeed);
 
     }
 

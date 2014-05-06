@@ -75,6 +75,7 @@ public class GameScene extends BaseScene implements IAccelerationListener {
 
     private List<Fish> possibleFishToEat;
     private boolean endGame;
+    private boolean endGameLose;
 
     private HighScoreService highScoreService;
     private OptionsService optionsService;
@@ -97,6 +98,7 @@ public class GameScene extends BaseScene implements IAccelerationListener {
         createTerrain();
         activateCollisions();
         createHUD();
+        updatePossibleFishToEat();
 
 //        createDebugRenderer();
     }
@@ -173,9 +175,9 @@ public class GameScene extends BaseScene implements IAccelerationListener {
     }
 
     private void createPlayer(FishType fishType) {
-        FishBodyData fishBodyData = new FishBodyData("player", ConstantsUtil.TAG_SPRITE_PLAYER);
+        FishBodyData fishBodyData = new FishBodyData("player", ConstantsUtil.TAG_SPRITE_PLAYER, fishType);
+        fishBodyData.updateActualFishParameters(optionsService.getFishValue(fishType), optionsService.getFishPower(fishType), optionsService.getFishSpeed(fishType));
         player = new Fish(ConstantsUtil.SCREEN_WIDTH, ConstantsUtil.SCREEN_HEIGHT, fishType, physicsWorld, false, fishBodyData, null, ConstantsUtil.TAG_SPRITE_PLAYER);
-
         attachChild(player);
     }
 
@@ -204,7 +206,9 @@ public class GameScene extends BaseScene implements IAccelerationListener {
         for (int i = 0; i < FishType.values().length; i++) {
             Fish fish = new Fish(520 + i * 50, 460, FishType.values()[i]);
             fish.setScale(0.5f);
+            fish.setAlpha(0.3f);
             possibleFishToEat.add(fish);
+
         }
 
         firstTimeCounter = 0;
@@ -212,6 +216,7 @@ public class GameScene extends BaseScene implements IAccelerationListener {
         points = 0;
 
         endGame = false;
+        endGameLose = false;
 
         timerTextStatic = new Text(30, 460, ResourcesManager.getInstance().getBlackFont(), "Time:", vertexBufferObjectManager);
         timerTextDynamic = new Text(80, 460, ResourcesManager.getInstance().getBlackFont(), "0123456789", vertexBufferObjectManager);
@@ -302,8 +307,16 @@ public class GameScene extends BaseScene implements IAccelerationListener {
     private void checkForEndGame() {
         if (endGame) {
             highScoreService.addScore(points);
-            optionsService.updateMoney(points);
-            SceneManager.getInstance().loadEndGameScene(points, numberOfEeatenFishes, player.getFishType());
+            Float fishValue = optionsService.getFishValue(player.getFishType());
+            optionsService.updateMoney(points * fishValue);
+            SceneManager.getInstance().loadEndGameScene(points, numberOfEeatenFishes, player.getFishType(), true);
+        }
+
+        if (endGameLose) {
+            highScoreService.addScore(points);
+            Float fishValue = optionsService.getFishValue(player.getFishType());
+            optionsService.updateMoney(points * fishValue);
+            SceneManager.getInstance().loadEndGameScene(points, numberOfEeatenFishes, player.getFishType(), false);
         }
     }
 
@@ -333,12 +346,23 @@ public class GameScene extends BaseScene implements IAccelerationListener {
     }
 
     public void addPoints(FishType fishType) {
-        points = points + fishType.getFishLevel();
+        points = points + fishType.getFishLevel() + 1;
+        ((FishBodyData) player.getCurrentBody().getUserData()).setPoints(points);
     }
 
     private void updateNumberOfEatenFishesText() {
         if (Integer.valueOf(numberOfEatenFishesTextDynamic.getText().toString()) != numberOfEeatenFishes) {
             numberOfEatenFishesTextDynamic.setText(String.valueOf(numberOfEeatenFishes));
+        }
+    }
+
+    public void updatePossibleFishToEat() {
+
+        for (Fish fish : possibleFishToEat) {
+            if ((points * ((FishBodyData) player.getCurrentBody().getUserData()).getFishPower()) >=
+                    fish.getFishType().getFishLevel() * fish.getFishType().getFishLevel() * ConstantsUtil.UNLOCK_LEVEL_MULTIPLIER) {
+                fish.setAlpha(1.0f);
+            }
         }
     }
 
@@ -378,5 +402,9 @@ public class GameScene extends BaseScene implements IAccelerationListener {
     public void onAccelerationChanged(AccelerationData pAccelerationData) {
         this.accelerationData = pAccelerationData;
 
+    }
+
+    public void setEndGameLose(boolean endGameLose) {
+        this.endGameLose = endGameLose;
     }
 }

@@ -203,8 +203,8 @@ public class SceneManager {
 
     }
 
-    public void loadEndGameScene(Integer score, Integer numberOfEeatenFishes, FishType fishType) {
-        endGameScene = new EndGameScene(score, numberOfEeatenFishes, fishType);
+    public void loadEndGameScene(Integer score, Integer numberOfEeatenFishes, FishType fishType, boolean win) {
+        endGameScene = new EndGameScene(score, numberOfEeatenFishes, fishType, win);
         setScene(endGameScene);
         gameScene.disposeScene();
         ResourcesManager.getInstance().unloadGameTextures();

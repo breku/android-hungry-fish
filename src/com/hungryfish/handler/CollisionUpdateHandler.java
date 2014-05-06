@@ -41,8 +41,13 @@ public class CollisionUpdateHandler implements IUpdateHandler {
 
 
                     if (userData.isKilled()) {
-                        gameScene.addOneEnemy();
-                        gameScene.addPoints(fish.getFishType());
+                        if (!fish.isEnemy()) {
+                            gameScene.setEndGameLose(true);
+                        } else {
+                            gameScene.addOneEnemy();
+                            gameScene.addPoints(fish.getFishType());
+                            gameScene.updatePossibleFishToEat();
+                        }
                     }
 
                     fish.detachSelf();
