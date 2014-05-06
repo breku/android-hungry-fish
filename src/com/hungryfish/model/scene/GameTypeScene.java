@@ -147,7 +147,7 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
     }
 
     private void createFishProperties() {
-        String[] textPropertiesArray = new String[]{"Speed", "Power", "Value"};
+        String[] textPropertiesArray = new String[]{"Speed", "Power", "Money Profit"};
 
         for (int i = 0; i < NUMBER_OF_PROPERITES; i++) {
             Text text = new Text(300, TOP_PROPERTY_HEIGHT - i * PROPERTY_STRIDE, ResourcesManager.getInstance().getBlackFont(), textPropertiesArray[i], vertexBufferObjectManager);
@@ -432,7 +432,7 @@ public class GameTypeScene extends BaseScene implements MenuScene.IOnMenuItemCli
                 propertyName = "Power";
                 break;
             case 2:
-                propertyName = "Value";
+                propertyName = "Money Profit";
                 break;
         }
         return propertyName;
